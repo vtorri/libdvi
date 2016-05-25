@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+pkgincludedir=@pkgincludedir@-@VMAJ@
+
+Name: $PACKAGE
+Description: DVI file interpreter
+Version: @VERSION@
+Requires.private:
+Libs: -L${libdir} -ldvi
+Libs.private:
+Cflags: -I${pkgincludedir}
