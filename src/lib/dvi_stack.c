@@ -35,13 +35,11 @@
  * @cond LOCAL
  */
 
-#define DVI_STACK_MAX_SIZE 100
-
 struct Dvi_Stack_
 {
     Dvi_Stack_Item *data;
-    unsigned char max_size;
-    unsigned char top;
+    int max_s; /* signed quad [73] */
+    int top;
 };
 
 struct Dvi_Stack_Item_
@@ -66,19 +64,13 @@ struct Dvi_Stack_Item_
 
 
 Dvi_Stack *
-dvi_stack_new(unsigned char max_size)
+dvi_stack_new(unsigned char max_s)
 {
     Dvi_Stack *stack;
 
-    if (max_size <= 0)
+    if (max_s <= 0)
     {
         DVI_LOG_ERR("Ivalid maximum stack size, must be greater than 0");
-        return NULL;
-    }
-
-    if (max_size > DVI_STACK_MAX_SIZE)
-    {
-        DVI_LOG_ERR("Ivalid maximum stack size, must be less than %d", DVI_STACK_MAX_SIZE);
         return NULL;
     }
 
@@ -89,7 +81,7 @@ dvi_stack_new(unsigned char max_size)
         return NULL;
     }
 
-    stack->data = calloc(max_size, sizeof(Dvi_Stack_Item));
+    stack->data = (Dvi_Stack_Item *)calloc(max_s, sizeof(Dvi_Stack_Item));
     if (!stack->data)
     {
         DVI_LOG_ERR("Can not allocate memory for stack items");
@@ -97,7 +89,7 @@ dvi_stack_new(unsigned char max_size)
         return NULL;
     }
 
-    stack->max_size = max_size;
+    stack->max_s = max_s;
 
     return stack;
 }
@@ -121,7 +113,7 @@ dvi_stack_reset(Dvi_Stack *stack)
 void
 dvi_stack_push(Dvi_Stack *stack, const Dvi_Stack_Item *item)
 {
-    if (stack->top == stack->max_size)
+    if (stack->top == stack->max_s)
     {
         DVI_LOG_ERR("Can not push item on stack, stack overflow");
         return;
@@ -142,7 +134,7 @@ dvi_stack_pop(Dvi_Stack *stack)
 
     stack->top--;
 
-    return &stack->data[stack->top];
+    return stack->data + stack->top;
 }
 
 
