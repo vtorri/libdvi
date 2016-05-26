@@ -22,14 +22,14 @@
 typedef struct Dvi_Stack_ Dvi_Stack;
 typedef struct Dvi_Stack_Item_ Dvi_Stack_Item;
 
-DAPI Dvi_Stack *dvi_stack_new(unsigned char max_size);
+Dvi_Stack *dvi_stack_new(unsigned char max_size);
 
-DAPI void dvi_stack_del(Dvi_Stack *stack);
+void dvi_stack_del(Dvi_Stack *stack);
 
-DAPI void dvi_stack_reset(Dvi_Stack *stack);
+void dvi_stack_reset(Dvi_Stack *stack);
 
-DAPI void dvi_stack_push(Dvi_Stack *stack, const Dvi_Stack_Item *item);
+void dvi_stack_push(Dvi_Stack *stack, const Dvi_Stack_Item *item);
 
-DAPI Dvi_Stack_Item *dvi_stack_pop(Dvi_Stack *stack);
+Dvi_Stack_Item *dvi_stack_pop(Dvi_Stack *stack);
 
 #endif /* DVI_STACK_H */
