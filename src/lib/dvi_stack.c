@@ -64,11 +64,11 @@ struct Dvi_Stack_Item_
 
 
 Dvi_Stack *
-dvi_stack_new(unsigned char max_s)
+dvi_stack_new(unsigned char max_size)
 {
     Dvi_Stack *stack;
 
-    if (max_s <= 0)
+    if (max_size <= 0)
     {
         DVI_LOG_ERR("Ivalid maximum stack size, must be greater than 0");
         return NULL;
@@ -81,7 +81,7 @@ dvi_stack_new(unsigned char max_s)
         return NULL;
     }
 
-    stack->data = (Dvi_Stack_Item *)calloc(max_s, sizeof(Dvi_Stack_Item));
+    stack->data = (Dvi_Stack_Item *)calloc(max_size, sizeof(Dvi_Stack_Item));
     if (!stack->data)
     {
         DVI_LOG_ERR("Can not allocate memory for stack items");
@@ -89,7 +89,7 @@ dvi_stack_new(unsigned char max_s)
         return NULL;
     }
 
-    stack->max_s = max_s;
+    stack->max_s = max_size;
 
     return stack;
 }
