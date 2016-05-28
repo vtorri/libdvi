@@ -128,7 +128,7 @@ _dvi_font_in_tfm(Dvi_Fonts *fontes, int z,
     /*     else if (k == 5) */
     /*     { */
     /*         if (b0 < 128) */
-    /*             *tfm_design_size = round(tfm_conv * (((b0 * 256 + b1) *256 + b2) * 256 + b3)); */
+    /*             *tfm_design_size = dvi_round(tfm_conv * (((b0 * 256 + b1) *256 + b2) * 256 + b3)); */
     /*         else */
     /*         { */
     /*             DVI_LOG_ERR("Invalid TFM file."); */
@@ -199,7 +199,7 @@ _dvi_font_in_tfm(Dvi_Fonts *fontes, int z,
     /*         else */
     /*         { */
     /*             width[k] = in_width[width[k]]; */
-    /*             pixel_width = round(conv * width[k]); */
+    /*             pixel_width = dvi_round(conv * width[k]); */
     /*         } */
     /*     } */
     /* } */
@@ -260,8 +260,8 @@ dvi_font_define(const Dvi_Document *doc,
         magnification = 1000;
     else
         magnification =
-            round((1000.0 * dvi_document_conv_get(doc) * scaled_size) /
-                  (dvi_document_true_conv_get(doc) * design_size));
+            dvi_round((1000.0 * dvi_document_conv_get(doc) * scaled_size) /
+                      (dvi_document_true_conv_get(doc) * design_size));
 
     a = dvi_read_uint8(iter);
     iter++;
@@ -381,7 +381,7 @@ dvi_font_define(const Dvi_Document *doc,
                                  design_size, tfm_design_size);
                 DVI_LOG_INFO("[Fntdef] Font %s [%d] loaded at size %d DVI units.",
                              doc->fontes->fonts[nf].name, e, scaled_size);
-                design_size = round((100.0 * dvi_document_conv_get(doc) * scaled_size) / (dvi_document_true_conv_get(doc) * design_size));
+                design_size = dvi_round((100.0 * dvi_document_conv_get(doc) * scaled_size) / (dvi_document_true_conv_get(doc) * design_size));
                 if (design_size != 100)
                     DVI_LOG_INFO("[Fntdef] Font %s magnified at %d.",
                                  doc->fontes->fonts[nf].name, design_size);

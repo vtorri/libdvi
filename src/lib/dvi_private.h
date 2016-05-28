@@ -42,7 +42,7 @@
 #define DVI_MAX_WIDTHS 10000
 
 static __inline__ int
-round(double d)
+dvi_round(double d)
 {
     return (int)floor(d + 0.5);
 }

@@ -30,6 +30,6 @@ src_lib_libdvi_la_CPPFLAGS = \
 src_lib_libdvi_la_CFLAGS = \
 @DVI_CFLAGS@
 
-src_lib_libdvi_la_LIBADD =
+src_lib_libdvi_la_LIBADD = -lm
 
 src_lib_libdvi_la_LDFLAGS = -no-undefined -version-info @version_info@
