@@ -51,8 +51,12 @@ typedef struct _Dvi_Process_Data Dvi_Process_Data;
 struct _Dvi_Process_Data
 {
     char *path;
+#ifdef _WIN32
     HANDLE pipe;
+#endif
 };
+
+#ifdef _WIN32
 
 static unsigned int __stdcall
 dvi_process_read_pipe_cb(void *ptr)
@@ -79,6 +83,8 @@ dvi_process_read_pipe_cb(void *ptr)
 
     return 0;
 }
+
+#endif
 
 
 /*============================================================================*
@@ -184,8 +190,9 @@ dvi_process_run(const char *arg)
 #else
 
 char *
-dvi_exec(const char *progname, const char *arg)
+dvi_process_run(const char *arg)
 {
+    return NULL;
 }
 
 #endif
