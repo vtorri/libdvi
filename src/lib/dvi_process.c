@@ -172,9 +172,10 @@ dvi_process_run(const char *arg)
     objs[1] = pi.hProcess;
     WaitForMultipleObjects(2, objs, TRUE, INFINITE );
 
+    CloseHandle(thread);
     CloseHandle(pi.hThread);
     CloseHandle(pi.hProcess);
-    CloseHandle(pipe_stdout_write);
+    CloseHandle(pipe_stdout_read);
 
     return strdup(data.path);
 
