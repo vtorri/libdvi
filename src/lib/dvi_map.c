@@ -174,9 +174,9 @@ dvi_map_new(const char *filename)
         goto close_fd;
     }
 
-    map->size = st.st_size;
+    map->length = st.st_size;
 
-    map->base = mmap(NULL, map->size, PROT_READ, MAP_SHARED, map->fd, 0);
+    map->base = mmap(NULL, map->length, PROT_READ, MAP_SHARED, map->fd, 0);
     if (!map->base)
     {
         DVI_LOG_ERR("Can not map file %s into memory", filename);
@@ -196,7 +196,7 @@ dvi_map_new(const char *filename)
 void
 dvi_map_del(Dvi_Map *map)
 {
-    munmap(map->base, map->size);
+    munmap(map->base, map->length);
     close(map->fd);
     free(map);
 }
