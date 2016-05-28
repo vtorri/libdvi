@@ -13,45 +13,14 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef DVI_H
-#define DVI_H
+#ifndef DVI_PROCESS_H
+#define DVI_PROCESS_H
 
-#ifdef DAPI
-# undef DAPI
-#endif
 
-#ifdef _WIN32
-# ifdef DVI_BUILD
-#  ifdef DLL_EXPORT
-#   define DAPI __declspec(dllexport)
-#  else
-#   define DAPI
-#  endif
-# else
-#  define DAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define DAPI __attribute__ ((visibility("default")))
-#  else
-#   define DAPI
-#  endif
-# else
-#  define DAPI
-# endif
-#endif
+char * dvi_process_run(const char *arg);
 
-DAPI int dvi_init(void);
-DAPI int dvi_shutdown(void);
 
-#include "dvi_log.h"
-#include "dvi_document.h"
-
-#undef DAPI
-#define DAPI
-
-#endif /* DVI_H */
+#endif /* DVI_PROCESS_H */

@@ -2,6 +2,7 @@
 .dirstamp
 .libs/
 *~
+*.o
 *.lo
 *.la
 *.exe

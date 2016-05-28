@@ -22,7 +22,7 @@ m4/ltsugar.m4 \
 m4/ltversion.m4
 
 include src/lib/Makefile.mk
-#include src/bin/Makefile.mk
+include src/bin/Makefile.mk
 
 sed_process = \
 $(SED) \

@@ -16,42 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef DVI_H
-#define DVI_H
+#ifndef DVI_DOCUMENT_H
+#define DVI_DOCUMENT_H
 
-#ifdef DAPI
-# undef DAPI
-#endif
+typedef struct _Dvi_Document Dvi_Document;
 
-#ifdef _WIN32
-# ifdef DVI_BUILD
-#  ifdef DLL_EXPORT
-#   define DAPI __declspec(dllexport)
-#  else
-#   define DAPI
-#  endif
-# else
-#  define DAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define DAPI __attribute__ ((visibility("default")))
-#  else
-#   define DAPI
-#  endif
-# else
-#  define DAPI
-# endif
-#endif
+DAPI Dvi_Document *dvi_document_new(const char *filename);
 
-DAPI int dvi_init(void);
-DAPI int dvi_shutdown(void);
+DAPI void dvi_document_del(Dvi_Document *doc);
 
-#include "dvi_log.h"
-#include "dvi_document.h"
-
-#undef DAPI
-#define DAPI
-
-#endif /* DVI_H */
+#endif /* DVI_DOCUMENT_H */

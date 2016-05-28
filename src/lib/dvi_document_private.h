@@ -16,42 +16,48 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef DVI_H
-#define DVI_H
+#ifndef DVI_DOCUMENT_PRIVATE_H
+#define DVI_DOCUMENT_PRIVATE_H
 
-#ifdef DAPI
-# undef DAPI
-#endif
+#include "dvi_map.h"
+#include "dvi_stack.h"
+#include "dvi_font.h"
 
-#ifdef _WIN32
-# ifdef DVI_BUILD
-#  ifdef DLL_EXPORT
-#   define DAPI __declspec(dllexport)
-#  else
-#   define DAPI
-#  endif
-# else
-#  define DAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define DAPI __attribute__ ((visibility("default")))
-#  else
-#   define DAPI
-#  endif
-# else
-#  define DAPI
-# endif
-#endif
+struct _Dvi_Document
+{
+    char *filename;
+    Dvi_Map *map;
 
-DAPI int dvi_init(void);
-DAPI int dvi_shutdown(void);
+    char *comment;
+    double conv;
+    double true_conv;
+    double tfm_conv;
+    Dvi_Stack *stack;
+    Dvi_Fonts *fontes;
+};
 
-#include "dvi_log.h"
-#include "dvi_document.h"
+static __inline__ const unsigned char *
+dvi_document_base_get(const Dvi_Document *doc)
+{
+    return dvi_map_base_get(doc->map);
+}
 
-#undef DAPI
-#define DAPI
+static __inline__ size_t
+dvi_document_length_get(const Dvi_Document *doc)
+{
+    return dvi_map_length_get(doc->map);
+}
 
-#endif /* DVI_H */
+static __inline__ double
+dvi_document_conv_get(const Dvi_Document *doc)
+{
+    return doc->conv;
+}
+
+static __inline__ double
+dvi_document_true_conv_get(const Dvi_Document *doc)
+{
+    return doc->true_conv;
+}
+
+#endif /* DVI_DOCUMENT_PRIVATE_H */

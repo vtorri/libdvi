@@ -16,42 +16,38 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef DVI_H
-#define DVI_H
+#ifndef DVI_FONT_H
+#define DVI_FONT_H
 
-#ifdef DAPI
-# undef DAPI
-#endif
+#include "dvi_map.h"
 
-#ifdef _WIN32
-# ifdef DVI_BUILD
-#  ifdef DLL_EXPORT
-#   define DAPI __declspec(dllexport)
-#  else
-#   define DAPI
-#  endif
-# else
-#  define DAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define DAPI __attribute__ ((visibility("default")))
-#  else
-#   define DAPI
-#  endif
-# else
-#  define DAPI
-# endif
-#endif
+typedef struct _Dvi_Fonts Dvi_Fonts;
+typedef struct _Dvi_Font_Tfm Dvi_Font_Tfm;
 
-DAPI int dvi_init(void);
-DAPI int dvi_shutdown(void);
+struct _Dvi_Fonts
+{
+    int width[DVI_MAX_WIDTHS];
+    Dvi_Font_Tfm *fonts;
+    unsigned int nf;
+};
 
-#include "dvi_log.h"
-#include "dvi_document.h"
+struct _Dvi_Font_Tfm
+{
+    char *name;
+    Dvi_Map *map;
+    int num; /* signed quad [15] [59] fnt_def* */
+    int check_sum; /* signed quad [30] [61] */
+    int scaled_size; /* signed quad [30] [61] */
+    int design_size; /* signed quad [30] [61] */
+    int space; /* signed quad [30]] */
+    int bc; /* signed quad [30]] */
+    int ec; /* signed quad [30]] */
+};
 
-#undef DAPI
-#define DAPI
+void dvi_font_define(const Dvi_Document *doc,
+                     const unsigned char **cur_loc,
+                     int e);
 
-#endif /* DVI_H */
+void dvi_font_del(Dvi_Fonts *fontes);
+
+#endif /* DVI_FONT_H */
