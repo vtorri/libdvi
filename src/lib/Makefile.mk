@@ -8,6 +8,7 @@ src_lib_libdvi_la_SOURCES = \
 src/lib/dvi_document.c \
 src/lib/dvi_font.c \
 src/lib/dvi_interpreter.c \
+src/lib/dvi_kpathsea.c \
 src/lib/dvi_log.c \
 src/lib/dvi_main.c \
 src/lib/dvi_map.c \
@@ -17,6 +18,7 @@ src/lib/dvi_document.h \
 src/lib/dvi_document_private.h \
 src/lib/dvi_font.h \
 src/lib/dvi_interpreter.h \
+src/lib/dvi_kpathsea.h \
 src/lib/dvi_log.h \
 src/lib/dvi_map.h \
 src/lib/dvi_opcodes.h \

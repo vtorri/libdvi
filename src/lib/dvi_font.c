@@ -28,6 +28,7 @@
 #include "dvi_log.h"
 #include "dvi_process.h"
 #include "dvi_map.h"
+#include "dvi_kpathsea.h"
 #include "dvi_font.h"
 #include "dvi_stack.h"
 #include "dvi_document_private.h"
@@ -326,6 +327,22 @@ dvi_font_define(const Dvi_Document *doc,
                 }
                 doc->fontes->fonts[nf].name = name;
             }
+        }
+
+        {
+            Dvi_Kpathsea *kps;
+            char *n;
+
+            DVI_LOG_INFO("[Fntdef] kpathsea lib");
+            kps = dvi_kpathsea_new("dvi.exe");
+            if (kps)
+            {
+                n = dvi_kpathsea_path_name_get(kps,
+                                               doc->fontes->fonts[nf].name);
+                dvi_kpathsea_free(kps);
+            }
+            else
+                DVI_LOG_ERR("[Fntdef] kpathsea lib not init !");
         }
 
         tfm_path = dvi_process_run(doc->fontes->fonts[nf].name);

@@ -61,6 +61,16 @@ AC_SUBST([version_info])
 
 ### configure options
 
+AC_ARG_WITH([kpathsea-dll-path],
+   [AS_HELP_STRING([--with-kpathsea-dll-path], [set path to kpathsea DLL on Windows @<:@default=auto@:>@])],
+   [kpathsea_dll=$with_kpathsea_dll_path
+   ],
+   [kpathsea_dll="auto"])
+
+if ! test "x${kpathsea_dll}" = "xauto" && test "x${have_win32}" = "xyes" ; then
+   AC_DEFINE_UNQUOTED([KPATHSEA_DLL], ["${kpathsea_dll}"], [Define to the given value of the kpathsea DLL on Windows])
+fi
+
 AC_ARG_ENABLE([release],
    [AS_HELP_STRING([--enable-release], [set release mode @<:@default=no@:>@])],
    [
@@ -95,7 +105,15 @@ fi
 
 ### Checks for libraries
 
+if test "x${have_win32}" = "xno" ; then
+   AC_SEARCH_LIBS([kpathsea_new], [kpathsea], [have_kpathsea="yes"], [have_kpathsea="no"])
+fi
+
 ### Checks for header files
+
+if test "x${have_win32}" = "xno"  && test "x${have_kpathsea}" = "xyes" ; then
+   AC_CHECK_HEADERS([kpathsea.h], [have_kpathsea="yes"], [have_kpathsea="no"])
+fi
 
 ### Checks for types
 
@@ -143,9 +161,14 @@ echo
 echo "  Release mode.........: ${enable_release}"
 echo
 if ! test "x${KPSEWHICH}" = "xnone" ; then
-echo "  kpathsea feature.....: ${KPSEWHICH}"
+echo "  kpsewhich............: ${KPSEWHICH}"
 else
-echo "  kpathsea feature.....: no"
+echo "  kpsewhich............: no"
+fi
+if test "x${have_win32}" = "xno" ; then
+echo "  kpathsea feature.....: ${have_kpathsea}"
+else
+echo "  kpathsea feature.....: ${kpathsea_dll}"
 fi
 echo
 echo "Compilation............: make (or gmake)"
