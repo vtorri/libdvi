@@ -23,6 +23,6 @@ unsigned char dvi_kpath_sea_init(void);
 
 void dvi_kpathsea_shutdown(void);
 
-char *dvi_kpathsea_path_name_get(const char *name);
+const char *dvi_kpathsea_path_name_get(const char *name);
 
 #endif /* DVI_FONT_H */

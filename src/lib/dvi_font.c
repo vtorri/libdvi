@@ -306,7 +306,7 @@ dvi_font_define(const Dvi_Document *doc,
 
         size_t len;
         char *ext;
-        char *tfm_path;
+        const char *tfm_path;
 
         /* Add .tfm to the file name if no extension [66] */
         if (name)
@@ -339,7 +339,6 @@ dvi_font_define(const Dvi_Document *doc,
         {
             DVI_LOG_INFO("[Fntdef] TFM font found in %s", tfm_path);
             doc->fontes->fonts[nf].map = dvi_map_new(tfm_path);
-            free(tfm_path);
             if (!doc->fontes->fonts[nf].map)
             {
                 DVI_LOG_ERR("[Fntdef] Font %s can not be opened.",

@@ -243,7 +243,7 @@ _dvi_kpathsea_dll_find(void)
      _dvi_kpathsea_finish)
 
 static unsigned char
-_dvi_kpathsea_functions_set(Dvi_Kpathsea *kps)
+_dvi_kpathsea_functions_set(void)
 {
     char *dll;
 
@@ -307,7 +307,7 @@ unsigned char
 dvi_kpath_sea_init(void)
 {
 #ifdef _WIN32
-    if (!_dvi_kpathsea_functions_set(kps))
+    if (!_dvi_kpathsea_functions_set())
         return 0;
 #else
     _dvi_kpathsea_new = kpathsea_new;
@@ -331,7 +331,7 @@ dvi_kpathsea_shutdown(void)
 #endif
 }
 
-char *
+const char *
 dvi_kpathsea_path_name_get(const char *name)
 {
     kpathsea kpse;
