@@ -25,6 +25,12 @@
 
 #include <stdio.h> /* for kpathsea */
 
+#ifdef HAVE_KPATHSEA_H
+# include <kpathsea.h>
+#elif defined HAVE_KPATHSEA_KPATHSEA_H
+# include <kpathsea/kpathsea.h>
+#endif
+
 #ifdef _WIN32
 # ifndef WIN32_LEAN_AND_MEAN
 #  define WIN32_LEAN_AND_MEAN
@@ -50,6 +56,7 @@
 #ifdef _WIN32
 
 typedef void* kpathsea;
+
 typedef enum
 {
   kpse_gf_format,
@@ -131,6 +138,8 @@ typedef struct
   kpse_glyph_source_type source; /* where we found it */
 } kpse_glyph_file_type;
 
+#endif
+
 typedef kpathsea (*_dvi_kpathsea_new_t)(void);
 typedef void (*_dvi_kpathsea_set_program_name_t)(kpathsea kpse,
                                                  const char *argv0,
@@ -154,38 +163,17 @@ typedef FILE *(*_dvi_kpathsea_open_file_t)(kpathsea kpse,
                                            kpse_file_format_type format);
 typedef void (*_dvi_kpathsea_finish_t)(kpathsea kpse);
 
+static _dvi_kpathsea_new_t _dvi_kpathsea_new;
+static _dvi_kpathsea_set_program_name_t _dvi_kpathsea_set_program_name;
+static _dvi_kpathsea_init_prog_t _dvi_kpathsea_init_prog;
+static _dvi_kpathsea_find_file_t _dvi_kpathsea_find_file;
+static _dvi_kpathsea_find_glyph_t _dvi_kpathsea_find_glyph;
+static _dvi_kpathsea_open_file_t _dvi_kpathsea_open_file;
+static _dvi_kpathsea_finish_t _dvi_kpathsea_finish;
 
-struct _Dvi_Kpathsea
-{
 #ifdef _WIN32
-    HMODULE mod;
-#endif
-    char *prog_name;
 
-    kpathsea (*kpathsea_new)(void);
-    void (*kpathsea_set_program_name)(kpathsea kpse,
-                                      const char *argv0,
-                                      const char *progname);
-    void (*kpathsea_init_prog)(kpathsea kpse,
-                               const char *prefix,
-                               unsigned int dpi,
-                               const char *mode,
-                               const char *fallback);
-    char *(*kpathsea_find_file)(kpathsea kpse,
-                                const char *name,
-                                kpse_file_format_type format,
-                                int must_exist);
-    char *(*kpathsea_find_glyph)(kpathsea kpse,
-                                 const char *font_name,
-                                 unsigned int dpi,
-                                 kpse_file_format_type format,
-                                 kpse_glyph_file_type *glyph_file);
-    FILE *(*kpathsea_open_file)(kpathsea kpse,
-                                const char *name,
-                                kpse_file_format_type format);
-    void (*kpathsea_finish)(kpathsea kpse);
-};
-
+static HMODULE _dvi_kpathsea_module;
 
 static char *
 _dvi_kpathsea_dll_find(void)
@@ -227,13 +215,13 @@ _dvi_kpathsea_dll_find(void)
     return NULL;
 }
 
-#define DVI_FCT_MIKTEX_GET(sym) \
-    kps->sym = (_dvi_##sym##_t)GetProcAddress(kps->mod, "miktek" #sym)
+# define DVI_FCT_MIKTEX_GET(sym) \
+    _dvi_##sym = (_dvi_##sym##_t)GetProcAddress(_dvi_kpathsea_module, "miktek" #sym)
 
-#define DVI_FCT_TEXLIVE_GET(sym) \
-    kps->sym = (_dvi_##sym##_t)GetProcAddress(kps->mod, #sym)
+# define DVI_FCT_TEXLIVE_GET(sym) \
+    _dvi_##sym = (_dvi_##sym##_t)GetProcAddress(_dvi_kpathsea_module, #sym)
 
-#define DVI_FCTS_GET(tex)                   \
+# define DVI_FCTS_GET(tex)                   \
     do \
     { \
         DVI_FCT_##tex##_GET(kpathsea_new); \
@@ -246,22 +234,22 @@ _dvi_kpathsea_dll_find(void)
     } while (0)
 
 #define DVI_FCTS_TEST \
-    (kps->kpathsea_new && \
-     kps->kpathsea_set_program_name && \
-     kps->kpathsea_init_prog && \
-     kps->kpathsea_find_file && \
-     kps->kpathsea_find_glyph && \
-     kps->kpathsea_open_file && \
-     kps->kpathsea_finish)
+    (_dvi_kpathsea_new && \
+     _dvi_kpathsea_set_program_name && \
+     _dvi_kpathsea_init_prog && \
+     _dvi_kpathsea_find_file && \
+     _dvi_kpathsea_find_glyph && \
+     _dvi_kpathsea_open_file && \
+     _dvi_kpathsea_finish)
 
 static unsigned char
 _dvi_kpathsea_functions_set(Dvi_Kpathsea *kps)
 {
     char *dll;
 
-#ifdef KPATHSEA_DLL
-    kps->mod = LoadLibrary(KPATHSEA_DLL);
-    if (kps->mod)
+# ifdef KPATHSEA_DLL
+    _dvi_kpathsea_module = LoadLibrary(KPATHSEA_DLL);
+    if (_dvi_kpathsea_module)
     {
         DVI_FCTS_GET(MIKTEX);
         if (!DVI_FCTS_TEST)
@@ -274,10 +262,10 @@ _dvi_kpathsea_functions_set(Dvi_Kpathsea *kps)
         return 1;
 
       free_mod:
-        FreeLibrary(kps->mod);
-        kps->mod = NULL;
+        FreeLibrary(_dvi_kpathsea_module);
+        _dvi_kpathsea_module = NULL;
     }
-#endif
+# endif
     dll = _dvi_kpathsea_dll_find();
     if (!dll)
     {
@@ -285,9 +273,9 @@ _dvi_kpathsea_functions_set(Dvi_Kpathsea *kps)
         return 0;
     }
     DVI_LOG_INFO("kpathsea DLL  found: %s.", dll);
-    kps->mod = LoadLibrary(dll);
+    _dvi_kpathsea_module = LoadLibrary(dll);
     free(dll);
-    if (!kps->mod)
+    if (!_dvi_kpathsea_module)
         return 0;
 
     DVI_FCTS_GET(MIKTEX);
@@ -296,8 +284,8 @@ _dvi_kpathsea_functions_set(Dvi_Kpathsea *kps)
         DVI_FCTS_GET(TEXLIVE);
         if (!DVI_FCTS_TEST)
         {
-            FreeLibrary(kps->mod);
-            kps->mod = NULL;
+            FreeLibrary(_dvi_kpathsea_module);
+            _dvi_kpathsea_module = NULL;
             return 0;
         }
     }
@@ -315,62 +303,52 @@ _dvi_kpathsea_functions_set(Dvi_Kpathsea *kps)
  *                                 Global                                     *
  *============================================================================*/
 
-Dvi_Kpathsea *
-dvi_kpathsea_new(const char *prog_name)
+unsigned char
+dvi_kpath_sea_init(void)
 {
-    Dvi_Kpathsea *kps;
-
-    kps = (Dvi_Kpathsea *)calloc(1, sizeof(Dvi_Kpathsea));
-    if (!kps)
-        return NULL;
-
-    kps->prog_name = strdup(prog_name);
-    if (!kps->prog_name)
-        goto free_kps;
-
+#ifdef _WIN32
     if (!_dvi_kpathsea_functions_set(kps))
-        goto free_prog_name;
+        return 0;
+#else
+    _dvi_kpathsea_new = kpathsea_new;
+    _dvi_kpathsea_set_program_name = kpathsea_set_program_name;
+    _dvi_kpathsea_init_prog = kpathsea_init_prog;
+    _dvi_kpathsea_find_file = kpathsea_find_file;
+    _dvi_kpathsea_find_glyph = kpathsea_find_glyph;
+    _dvi_kpathsea_open_file = kpathsea_open_file;
+    _dvi_kpathsea_finish = kpathsea_finish;
+#endif
 
-    return kps;
-
-  free_prog_name:
-    free(kps->prog_name);
-  free_kps:
-    free(kps);
-
-    return NULL;
+    return 1;
 }
 
 void
-dvi_kpathsea_free(Dvi_Kpathsea *kps)
+dvi_kpathsea_shutdown(void)
 {
-    if (!kps)
-        return;
-
-    if (kps->mod)
-        FreeLibrary(kps->mod);
-    free(kps->prog_name);
-    free(kps);
+#ifdef _WIN32
+    if (_dvi_kpathsea_module)
+        FreeLibrary(_dvi_kpathsea_module);
+#endif
 }
 
 char *
-dvi_kpathsea_path_name_get(Dvi_Kpathsea *kps, const char *name)
+dvi_kpathsea_path_name_get(const char *name)
 {
     kpathsea kpse;
     char *n;
 
-    kpse = kps->kpathsea_new();
+    kpse = _dvi_kpathsea_new();
     if (!kpse)
     {
         DVI_LOG_ERR("_dvi_kpathsea_new");
     }
 
-    kps->kpathsea_set_program_name(kpse, "dvi.exe", NULL);
-    kps->kpathsea_init_prog (kpse, "dvi.exe", 300, NULL, NULL);
+    _dvi_kpathsea_set_program_name(kpse, "kpsewhich", NULL);
+    _dvi_kpathsea_init_prog (kpse, "LIBDVI", 300, NULL, NULL);
     DVI_LOG_ERR("fonte: %s", name);
-    n = kps->kpathsea_find_file(kpse, name, kpse_tfm_format, 1);
+    n = _dvi_kpathsea_find_file(kpse, name, kpse_tfm_format, 1);
     DVI_LOG_ERR(" * name : %s", n);
-    kps->kpathsea_finish(kpse);
+    _dvi_kpathsea_finish(kpse);
     return n;
 }
 

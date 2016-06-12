@@ -22,6 +22,7 @@
 
 #include "Dvi.h"
 #include "dvi_log.h"
+#include "dvi_kpathsea.h"
 #include "dvi_private.h"
 
 
@@ -57,6 +58,9 @@ dvi_init(void)
 
     dvi_log_init();
 
+    if (!dvi_kpath_sea_init())
+      return --_dvi_init_count;
+
     return _dvi_init_count;
 }
 
@@ -71,6 +75,8 @@ dvi_shutdown(void)
 
     if (--_dvi_init_count != 0)
         return _dvi_init_count;
+
+    dvi_kpathsea_shutdown();
 
     return _dvi_init_count;
 }

@@ -19,12 +19,10 @@
 #ifndef DVI_KPATHSEA_H
 #define DVI_KPATHSEA_H
 
-typedef struct _Dvi_Kpathsea Dvi_Kpathsea;
+unsigned char dvi_kpath_sea_init(void);
 
-Dvi_Kpathsea *dvi_kpathsea_new(const char *prog_name);
+void dvi_kpathsea_shutdown(void);
 
-void dvi_kpathsea_free(Dvi_Kpathsea *kps);
-
-char *dvi_kpathsea_path_name_get(Dvi_Kpathsea *kps, const char *name);
+char *dvi_kpathsea_path_name_get(const char *name);
 
 #endif /* DVI_FONT_H */
