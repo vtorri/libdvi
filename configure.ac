@@ -113,6 +113,9 @@ fi
 
 if test "x${have_win32}" = "xno"  && test "x${have_kpathsea}" = "xyes" ; then
    AC_CHECK_HEADERS([kpathsea.h], [have_kpathsea="yes"], [have_kpathsea="no"])
+   if test "x${have_kpathsea}" = "xno" ; then
+      AC_CHECK_HEADERS([kpathsea/kpathsea.h], [have_kpathsea="yes"], [have_kpathsea="no"])
+   fi
 fi
 
 ### Checks for types
@@ -124,7 +127,7 @@ fi
 DVI_ATTRIBUTE_UNUSED
 
 if test "x${no_cflags}" = "xyes" ; then
-   DVI_CFLAGS="-ansi -pedantic -Wall -Wextra -Wshadow -Wdeclaration-after-statement -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls -Wpointer-arith -Wno-variadic-macros -Wno-missing-field-initializers -Winline -Wwrite-strings"
+   DVI_CFLAGS="-pedantic -Wall -Wextra -Wshadow -Wdeclaration-after-statement -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls -Wpointer-arith -Wno-variadic-macros -Wno-missing-field-initializers -Winline -Wwrite-strings"
 
    if test "x${have_win32}" = "xyes" ; then
       DVI_CFLAGS="${DVI_CFLAGS} -Wno-pedantic-ms-format"
