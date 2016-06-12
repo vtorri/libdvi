@@ -335,57 +335,55 @@ dvi_font_define(const Dvi_Document *doc,
                          doc->fontes->fonts[nf].name);
             goto free_name;
         }
-        else
+
+        DVI_LOG_INFO("[Fntdef] TFM font found in %s", tfm_path);
+        doc->fontes->fonts[nf].map = dvi_map_new(tfm_path);
+        if (!doc->fontes->fonts[nf].map)
         {
-            DVI_LOG_INFO("[Fntdef] TFM font found in %s", tfm_path);
-            doc->fontes->fonts[nf].map = dvi_map_new(tfm_path);
-            if (!doc->fontes->fonts[nf].map)
-            {
-                DVI_LOG_ERR("[Fntdef] Font %s can not be opened.",
-                            doc->fontes->fonts[nf].name);
-                goto free_name;
-            }
-            else if ((doc->fontes->fonts[nf].scaled_size <= 0) ||
-                     (doc->fontes->fonts[nf].scaled_size >= 01000000000))
-            {
-                DVI_LOG_ERR("[Fntdef] Font %s has bad scale %d.",
-                            doc->fontes->fonts[nf].name,
-                            doc->fontes->fonts[nf].scaled_size);
-                goto del_map;
-            }
-            else if ((doc->fontes->fonts[nf].design_size <= 0) ||
-                     (doc->fontes->fonts[nf].design_size >= 01000000000))
-            {
-                DVI_LOG_ERR("[Fntdef] Font %s has bad design size %d.",
-                            doc->fontes->fonts[nf].name,
-                            doc->fontes->fonts[nf].design_size);
-                goto del_map;
-            }
-            else if (_dvi_font_in_tfm(doc->fontes,
-                                      doc->fontes->fonts[nf].scaled_size,
-                                      doc->conv,
-                                      doc->tfm_conv,
-                                      &tfm_check_sum,
-                                      &tfm_design_size))
-            {
-                /* Finish loading the new font info [63] */
-                doc->fontes->fonts[nf].space = scaled_size % 6;
-                if ((check_sum != 0) &&
-                    (tfm_check_sum != 0) &&
-                    (check_sum != tfm_check_sum))
-                    DVI_LOG_WARN("[Fntdef] check sums do not agree (%d != %d).",
-                                 check_sum, tfm_check_sum);
-                if (abs(tfm_design_size - design_size) > 2)
-                    DVI_LOG_WARN("[Fntdef] design sizes do not agree (%d, %d).",
-                                 design_size, tfm_design_size);
-                DVI_LOG_INFO("[Fntdef] Font %s [%d] loaded at size %d DVI units.",
-                             doc->fontes->fonts[nf].name, e, scaled_size);
-                design_size = dvi_round((100.0 * dvi_document_conv_get(doc) * scaled_size) / (dvi_document_true_conv_get(doc) * design_size));
-                if (design_size != 100)
-                    DVI_LOG_INFO("[Fntdef] Font %s magnified at %d.",
-                                 doc->fontes->fonts[nf].name, design_size);
-                doc->fontes->nf++;
-            }
+            DVI_LOG_ERR("[Fntdef] Font %s can not be opened.",
+                        doc->fontes->fonts[nf].name);
+            goto free_name;
+        }
+        else if ((doc->fontes->fonts[nf].scaled_size <= 0) ||
+                 (doc->fontes->fonts[nf].scaled_size >= 01000000000))
+        {
+            DVI_LOG_ERR("[Fntdef] Font %s has bad scale %d.",
+                        doc->fontes->fonts[nf].name,
+                        doc->fontes->fonts[nf].scaled_size);
+            goto del_map;
+        }
+        else if ((doc->fontes->fonts[nf].design_size <= 0) ||
+                 (doc->fontes->fonts[nf].design_size >= 01000000000))
+        {
+            DVI_LOG_ERR("[Fntdef] Font %s has bad design size %d.",
+                        doc->fontes->fonts[nf].name,
+                        doc->fontes->fonts[nf].design_size);
+            goto del_map;
+        }
+        else if (_dvi_font_in_tfm(doc->fontes,
+                                  doc->fontes->fonts[nf].scaled_size,
+                                  doc->conv,
+                                  doc->tfm_conv,
+                                  &tfm_check_sum,
+                                  &tfm_design_size))
+        {
+            /* Finish loading the new font info [63] */
+            doc->fontes->fonts[nf].space = scaled_size % 6;
+            if ((check_sum != 0) &&
+                (tfm_check_sum != 0) &&
+                (check_sum != tfm_check_sum))
+                DVI_LOG_WARN("[Fntdef] check sums do not agree (%d != %d).",
+                             check_sum, tfm_check_sum);
+            if (abs(tfm_design_size - design_size) > 2)
+                DVI_LOG_WARN("[Fntdef] design sizes do not agree (%d, %d).",
+                             design_size, tfm_design_size);
+            DVI_LOG_INFO("[Fntdef] Font %s [%d] loaded at size %d DVI units.",
+                         doc->fontes->fonts[nf].name, e, scaled_size);
+            design_size = dvi_round((100.0 * dvi_document_conv_get(doc) * scaled_size) / (dvi_document_true_conv_get(doc) * design_size));
+            if (design_size != 100)
+                DVI_LOG_INFO("[Fntdef] Font %s magnified at %d.",
+                             doc->fontes->fonts[nf].name, design_size);
+            doc->fontes->nf++;
         }
 
         *cur_loc = iter;
