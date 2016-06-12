@@ -64,10 +64,10 @@ static Dvi_Log_Level _dvi_log_level = DVI_LOG_LEVEL_ERR;
 
 static Dvi_Log_Print_Cb _dvi_log_print_cb = dvi_log_print_cb_stderr;
 static void *_dvi_log_print_cb_data = NULL;
-static unsigned char _dvi_log_is_posix = 1;
 
 #ifdef _WIN32
 
+static unsigned char _dvi_log_is_posix = 1;
 static HANDLE _dvi_log_handle_stdout = NULL;
 static HANDLE _dvi_log_handle_stderr = NULL;
 
@@ -193,7 +193,11 @@ _dvi_log_fprint_cb(FILE *stream,
     int res;
     int s;
 
+#ifdef _WIN32
     args_copy = args;
+#else
+    va_copy(args_copy, args);
+#endif
 
     s = vsnprintf(NULL, 0, fmt, args_copy);
     if (s == -1)
