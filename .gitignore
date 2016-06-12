@@ -6,6 +6,7 @@
 *.lo
 *.la
 *.exe
+src/bin/dvi
 Makefile
 Makefile.in
 aclocal.m4
