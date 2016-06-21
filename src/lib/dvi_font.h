@@ -26,9 +26,11 @@ typedef struct _Dvi_Font_Tfm Dvi_Font_Tfm;
 
 struct _Dvi_Fonts
 {
-    int width[DVI_MAX_WIDTHS];
+    int pixel_width[DVI_MAX_WIDTHS + 1]; /* actual character widths, in pixels, signed quads [39] */
+    int width[DVI_MAX_WIDTHS + 1]; /* character widths, in DVI units, signed quads [30] */
     Dvi_Font_Tfm *fonts;
-    unsigned int nf;
+    unsigned int nf; /* the number of known fonts, unsigned quad [30] */
+    unsigned int width_ptr; /* the number of known character widths, unsigned quad [30] */
 };
 
 struct _Dvi_Font_Tfm
@@ -42,6 +44,7 @@ struct _Dvi_Font_Tfm
     int space; /* signed quad [30]] */
     int bc; /* signed quad [30]] */
     int ec; /* signed quad [30]] */
+    int width_base; /* signed quad [30]] */
 };
 
 void dvi_font_define(const Dvi_Document *doc,

@@ -341,13 +341,12 @@ dvi_kpathsea_path_name_get(const char *name)
     if (!kpse)
     {
         DVI_LOG_ERR("_dvi_kpathsea_new");
+	return NULL;
     }
 
     _dvi_kpathsea_set_program_name(kpse, "kpsewhich", NULL);
     _dvi_kpathsea_init_prog (kpse, "LIBDVI", 300, NULL, NULL);
-    DVI_LOG_ERR("fonte: %s", name);
     n = _dvi_kpathsea_find_file(kpse, name, kpse_tfm_format, 1);
-    DVI_LOG_ERR(" * name : %s", n);
     _dvi_kpathsea_finish(kpse);
     return n;
 }

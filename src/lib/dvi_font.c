@@ -65,146 +65,144 @@ _dvi_font_in_tfm(Dvi_Fonts *fontes, int z,
                  double conv, double tfm_conv,
                  int *tfm_check_sum, int *tfm_design_size)
 {
-    /* const unsigned char *tfm_cur_loc; */
-    /* unsigned int nf; */
-    /* int k; /\* index for loop [34] *\/ */
-    /* int lh; /\* length of the header data, in four-byte words [34] *\/ */
-    /* int nw; /\* number of words in the width table [34] *\/ */
-    /* int width_ptr; /\* number of known character widths [30] *\/ */
-    /* int wp; /\* new value of width_ptr after succesful input [34] *\/ */
-    /* int alpha; */
-    /* int beta; */
-    /* unsigned char b0; */
-    /* unsigned char b1; */
-    /* unsigned char b2; */
-    /* unsigned char b3; */
-    /* unsigned char res = 1; */
+    int in_width[256]; /* TFM width data in DVI units, signed quads [33] */
+    const unsigned char *tfm_cur_loc;
+    unsigned int nf;
+    int k; /* index for loop [34] */
+    int lh; /* length of the header data, in four-byte words [34] */
+    int nw; /* number of words in the width table [34] */
+    int wp; /* new value of width_ptr after succesful input [34] */
+    int alpha;
+    int beta;
+    unsigned char b0;
+    unsigned char b1;
+    unsigned char b2;
+    unsigned char b3;
 
-    /* nf = fontes->nf; */
-    /* width_ptr = 0; */
-    /* tfm_cur_loc = dvi_map_base_get(fontes->fonts[nf].map); */
+    nf = fontes->nf;
+    tfm_cur_loc = dvi_map_base_get(fontes->fonts[nf].map);
 
-    /* /\* Read past the header data [35] *\/ */
-    /* DVI_TFM_WORD_READ; */
-    /* lh = (b2 << 8) + b3; /\* b2 * 256 + b3 *\/ */
+    /* Read past the header data [35] */
+    DVI_TFM_WORD_READ;
+    lh = (b2 << 8) + b3; /* b2 * 256 + b3 */
 
-    /* DVI_TFM_WORD_READ; */
-    /* fontes->fonts[nf].bc = (b0 << 8) + b1; /\* b0 * 256 + b1 *\/ */
-    /* fontes->fonts[nf].ec = (b2 << 8) + b3; /\* b2 * 256 + b3 *\/ */
-    /* if (fontes->fonts[nf].ec < fontes->fonts[nf].bc) */
-    /*     fontes->fonts[nf].bc = fontes->fonts[nf].ec + 1; */
+    DVI_TFM_WORD_READ;
+    fontes->fonts[nf].bc = (b0 << 8) + b1; /* b0 * 256 + b1 */
+    fontes->fonts[nf].ec = (b2 << 8) + b3; /* b2 * 256 + b3 */
+    if (fontes->fonts[nf].ec < fontes->fonts[nf].bc)
+        fontes->fonts[nf].bc = fontes->fonts[nf].ec + 1;
 
-    /* if ((width_ptr + fontes->fonts[nf].ec - fontes->fonts[nf].bc + 1) > DVI_MAX_WIDTHS) */
-    /* { */
-    /*     DVI_LOG_ERR("Table width not large enough."); */
-    /*     return 0; */
-    /* } */
+    if ((fontes->width_ptr + fontes->fonts[nf].ec - fontes->fonts[nf].bc + 1) > DVI_MAX_WIDTHS)
+    {
+        DVI_LOG_ERR("Table width not large enough.");
+        return 0;
+    }
 
-    /* wp = width_ptr + fontes->fonts[nf].ec - fontes->fonts[nf].bc + 1; */
-    /* DVI_TFM_WORD_READ; */
-    /* nw = (b0 << 8) + b1; /\* b0 * 256 + b1 *\/ */
-    /* if ((nw == 0) || (nw > 256)) */
-    /* { */
-    /*     DVI_LOG_ERR("Invalid TFM file."); */
-    /*     return 0; */
-    /* } */
+    wp = fontes->width_ptr + fontes->fonts[nf].ec - fontes->fonts[nf].bc + 1;
+    DVI_TFM_WORD_READ;
+    nw = (b0 << 8) + b1; /* b0 * 256 + b1 */
+    if ((nw == 0) || (nw > 256))
+    {
+        DVI_LOG_ERR("Invalid TFM file.");
+        return 0;
+    }
 
-    /* for (k = 1; k <= (3 + lh); k++) */
-    /* { */
-    /*     if ((tfm_cur_loc - dvi_map_base_get(fontes->fonts[nf].map)) >= (ptrdiff_t)dvi_map_length_get(fontes->fonts[nf].map)) */
-    /*     { */
-    /*         DVI_LOG_ERR("Invalid TFM file."); */
-    /*         return 0; */
-    /*     } */
+    for (k = 1; k <= (3 + lh); k++)
+    {
+        if ((tfm_cur_loc - dvi_map_base_get(fontes->fonts[nf].map)) >= (ptrdiff_t)dvi_map_length_get(fontes->fonts[nf].map))
+        {
+            DVI_LOG_ERR("Invalid TFM file.");
+            return 0;
+        }
 
-    /*     DVI_TFM_WORD_READ; */
-    /*     if (k == 4) */
-    /*     { */
-    /*         if (b0 < 128) */
-    /*             *tfm_check_sum = ((b0 * 256 + b1) *256 + b2) * 256 + b3; */
-    /*         else */
-    /*             *tfm_check_sum = (((b0 - 256) * 256 + b1) *256 + b2) * 256 + b3; */
-    /*     } */
-    /*     else if (k == 5) */
-    /*     { */
-    /*         if (b0 < 128) */
-    /*             *tfm_design_size = dvi_round(tfm_conv * (((b0 * 256 + b1) *256 + b2) * 256 + b3)); */
-    /*         else */
-    /*         { */
-    /*             DVI_LOG_ERR("Invalid TFM file."); */
-    /*             return 0; */
-    /*         } */
-    /*     } */
-    /* } */
+        DVI_TFM_WORD_READ;
+        if (k == 4)
+        {
+            if (b0 < 128)
+                *tfm_check_sum = ((b0 * 256 + b1) *256 + b2) * 256 + b3;
+            else
+                *tfm_check_sum = (((b0 - 256) * 256 + b1) *256 + b2) * 256 + b3;
+        }
+        else if (k == 5)
+        {
+            if (b0 < 128)
+                *tfm_design_size = dvi_round(tfm_conv * (((b0 * 256 + b1) *256 + b2) * 256 + b3));
+            else
+            {
+                DVI_LOG_ERR("Invalid TFM file.");
+                return 0;
+            }
+        }
+    }
 
-    /* /\* Store character-width indices at the end of the width table [36] *\/ */
-    /* if (wp > 0) */
-    /* { */
-    /*     for (k = width_ptr; k < wp; k++) */
-    /*     { */
-    /*         DVI_TFM_WORD_READ; */
-    /*         if (b0 > nw) */
-    /*         { */
-    /*             DVI_LOG_ERR("Invalid TFM file."); */
-    /*             return 0; */
-    /*         } */
-    /*         width[k] = b0; */
-    /*     } */
-    /* } */
+    /* Store character-width indices at the end of the width table [36] */
+    if (wp > 0)
+    {
+        for (k = fontes->width_ptr; k < wp; k++)
+        {
+            DVI_TFM_WORD_READ;
+            if (b0 > nw)
+            {
+                DVI_LOG_ERR("Invalid TFM file.");
+                return 0;
+            }
+            fontes->width[k] = b0;
+        }
+    }
 
-    /* /\* Read and convert the width values, setting up the in_width table [37] *\/ */
-    /* /\* Replace z by z' and compute alpha and beta [38] *\/ */
-    /* alpha = 16; */
-    /* while (z >= 040000000) */
-    /* { */
-    /*     z /= 2; */
-    /*     alpha += alpha; */
-    /* } */
-    /* beta = 256 / alpha; */
-    /* alpha *= z; */
+    /* Read and convert the width values, setting up the in_width table [37] */
+    /* Replace z by z' and compute alpha and beta [38] */
+    alpha = 16;
+    while (z >= 040000000)
+    {
+        z /= 2;
+        alpha += alpha;
+    }
+    beta = 256 / alpha;
+    alpha *= z;
 
-    /* for (k = 0; k < nw; k++) */
-    /* { */
-    /*     DVI_TFM_WORD_READ; */
-    /*     in_width[k] = (((((b3 * z) / 0400) + (b2 * z)) / 0400) + (b1 * z)) / beta; */
-    /*     if (b0 > 0) */
-    /*     { */
-    /*         if (b0 < 255) */
-    /*         { */
-    /*             DVI_LOG_ERR("Invalid TFM file."); */
-    /*             return 0; */
-    /*         } */
-    /*         else */
-    /*             in_width[k] = in_width[k] - alpha; */
-    /*     } */
-    /* } */
+    for (k = 0; k < nw; k++)
+    {
+        DVI_TFM_WORD_READ;
+        in_width[k] = (((((b3 * z) / 0400) + (b2 * z)) / 0400) + (b1 * z)) / beta;
+        if (b0 > 0)
+        {
+            if (b0 < 255)
+            {
+                DVI_LOG_ERR("Invalid TFM file.");
+                return 0;
+            }
+            else
+                in_width[k] = in_width[k] - alpha;
+        }
+    }
 
-    /* /\* move the widths from in_width to width, and append pixel_width values [40] *\/ */
-    /* if (in_width[0] != 0) */
-    /* { */
-    /*     DVI_LOG_ERR("Invalid TFM file."); */
-    /*     return 0; */
-    /* } */
+    /* move the widths from in_width to width, and append pixel_width values [40] */
+    if (in_width[0] != 0)
+    {
+        DVI_LOG_ERR("Invalid TFM file: first width should be 0.");
+        return 0;
+    }
 
-    /* width_base[nf] = width_ptr - fontes->fonts[nf].bc; */
-    /* if (wp > 0) */
-    /* { */
-    /*     for (k = width_ptr; k < wp; k++) */
-    /*     { */
-    /*         if (width[k] == 0) */
-    /*         { */
-    /*             width[k] = 0x7fffffff; /\* 017777777777 in dvitype *\/ */
-    /*             pixel_width[k] = 0; */
-    /*         } */
-    /*         else */
-    /*         { */
-    /*             width[k] = in_width[width[k]]; */
-    /*             pixel_width = dvi_round(conv * width[k]); */
-    /*         } */
-    /*     } */
-    /* } */
+    fontes->fonts[nf].width_base = fontes->width_ptr - fontes->fonts[nf].bc;
+    if (wp > 0)
+    {
+        for (k = fontes->width_ptr; k < wp; k++)
+        {
+            if (fontes->width[k] == 0)
+            {
+                fontes->width[k] = 0x7fffffff; /* 017777777777 in dvitype */
+                fontes->pixel_width[k] = 0;
+            }
+            else
+            {
+                fontes->width[k] = in_width[fontes->width[k]];
+                fontes->pixel_width[k] = dvi_round(conv * fontes->width[k]);
+            }
+        }
+    }
 
-    /* width_ptr = wp; */
+    fontes->width_ptr = wp;
 
     return 1;
 }

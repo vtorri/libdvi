@@ -466,6 +466,7 @@ dvi_interpreter_fnt_def_parse(Dvi_Document *doc,
 
     doc->fontes = fontes;
     doc->fontes->nf = 0;
+    doc->fontes->width_ptr = 0;
 
     do
     {
