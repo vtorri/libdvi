@@ -272,25 +272,46 @@ dvi_font_define(const Dvi_Document *doc,
     }
     else
     {
-        name = (char *)malloc((a + l + 1) * sizeof(char));
+        const unsigned char *ext;
+        ptrdiff_t it;
+
+        DVI_LOG_ERR("[Fntdef] font %d has name length a : %d and l : %d", e, a, l);
+        for (it = 0, ext = NULL; it < l; it++)
+        {
+            if (*(iter + a + it) == '.')
+                ext = iter + a + it;
+        }
+        name = (char *)malloc((a + l + (ext ? 4 : 0) + 1) * sizeof(char));
         if (name)
+        {
+            /*
+             * could be done with 1 memcpy, but let's see what happens
+             * if i find a DVI file with a 'a' not equal to 0
+             */
             memcpy(name, iter, a);
+            memcpy(name + a, iter + a, l);
+            /*
+             * Add .tfm to the file name if no extension [66]
+             *
+             * should be done below (f == nf) from dvitype, but
+             * not important for now
+             */
+            if (ext)
+                memcpy(name + a + l, ".tfm", 5);
+            else
+                name[a + l] = '\0';
+
+            if ((scaled_size <= 0) || (design_size <= 0))
+                DVI_LOG_INFO("[Fntdef] Font %s found, not scaled.",
+                             name);
+            else
+                DVI_LOG_INFO("[Fntdef] Font %s found, scaled at %d.",
+                             name, magnification);
+        }
         else
             DVI_LOG_ERR("[Fntdef] Can not allocate memory to store the name of font %d", e);
     }
-    iter += a;
-    if (name)
-    {
-        memcpy(name + a, iter, l);
-        name[a + l] = '\0';
-        if ((scaled_size <= 0) || (design_size <= 0))
-            DVI_LOG_INFO("[Fntdef] Font %s found, not scaled.",
-                         name);
-        else
-            DVI_LOG_INFO("[Fntdef] Font %s found, scaled at %d.",
-                         name, magnification);
-    }
-    iter += l;
+    iter += a + l;
 
     doc->fontes->fonts[nf].num = e;
     doc->fontes->fonts[nf].check_sum = check_sum;
@@ -302,29 +323,13 @@ dvi_font_define(const Dvi_Document *doc,
     {
         /* Load the new font, unless there are problems [62] */
 
-        size_t len;
-        char *ext;
         const char *tfm_path;
 
-        /* Add .tfm to the file name if no extension [66] */
-        if (name)
-        {
-            ext = strrchr(name + a, '.');
-            if (!ext)
-            {
-                len = strlen(name);
-                name = realloc(name, len + 5);
-                if (name)
-                {
-                    name[len] = '.';
-                    name[len + 1] = 't';
-                    name[len + 2] = 'f';
-                    name[len + 3] = 'm';
-                    name[len + 4] = '\0';
-                }
-                doc->fontes->fonts[nf].name = name;
-            }
-        }
+        /*
+         * Add .tfm to the file name if no extension [66]
+         *
+         * Is done above
+         */
 
         tfm_path = dvi_kpathsea_path_name_get(doc->fontes->fonts[nf].name);
         if (!tfm_path)
