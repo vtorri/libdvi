@@ -265,32 +265,28 @@ dvi_font_define(const Dvi_Document *doc,
     iter++;
     l = dvi_read_uint8(iter);
     iter++;
+    name = NULL;
     if ((a == 0) && (l == 0))
-    {
-        name = NULL;
         DVI_LOG_ERR("[Fntdef] font %d has no name", e);
-    }
     else
     {
         name = (char *)malloc((a + l + 1) * sizeof(char));
         if (name)
+        {
             memcpy(name, iter, a);
+            memcpy(name + a, iter + a, l);
+            name[a + l] = '\0';
+            if ((scaled_size <= 0) || (design_size <= 0))
+                DVI_LOG_INFO("[Fntdef] Font %s found, not scaled.",
+                             name);
+            else
+                DVI_LOG_INFO("[Fntdef] Font %s found, scaled at %d.",
+                             name, magnification);
+        }
         else
             DVI_LOG_ERR("[Fntdef] Can not allocate memory to store the name of font %d", e);
     }
-    iter += a;
-    if (name)
-    {
-        memcpy(name + a, iter, l);
-        name[a + l] = '\0';
-        if ((scaled_size <= 0) || (design_size <= 0))
-            DVI_LOG_INFO("[Fntdef] Font %s found, not scaled.",
-                         name);
-        else
-            DVI_LOG_INFO("[Fntdef] Font %s found, scaled at %d.",
-                         name, magnification);
-    }
-    iter += l;
+    iter += a + l;
 
     doc->fontes->fonts[nf].num = e;
     doc->fontes->fonts[nf].check_sum = check_sum;
@@ -302,16 +298,23 @@ dvi_font_define(const Dvi_Document *doc,
     {
         /* Load the new font, unless there are problems [62] */
 
-        size_t len;
-        char *ext;
         const char *tfm_path;
 
         /* Add .tfm to the file name if no extension [66] */
         if (name)
         {
-            ext = strrchr(name + a, '.');
+            char *ext = NULL;
+            int i;
+
+            for (i = 0, ext = NULL; i < l; i++)
+            {
+                if (*(name + a + i) == '.')
+                    ext = name + a + i;
+            }
             if (!ext)
             {
+                size_t len;
+
                 len = strlen(name);
                 name = realloc(name, len + 5);
                 if (name)
