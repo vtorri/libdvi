@@ -272,11 +272,16 @@ _dvi_kpathsea_functions_set(void)
         DVI_LOG_ERR("DLL not found.");
         return 0;
     }
-    DVI_LOG_INFO("kpathsea DLL  found: %s.", dll);
+
+    DVI_LOG_INFO("kpathsea DLL found: %s.", dll);
     _dvi_kpathsea_module = LoadLibrary(dll);
-    free(dll);
     if (!_dvi_kpathsea_module)
+    {
+        DVI_LOG_ERR("kpathsea DLL %s can not be loaded.", dll);
+        free(dll);
         return 0;
+    }
+    free(dll);
 
     DVI_FCTS_GET(MIKTEX);
     if (!DVI_FCTS_TEST)
