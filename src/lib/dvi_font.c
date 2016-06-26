@@ -270,41 +270,12 @@ dvi_font_define(const Dvi_Document *doc,
         DVI_LOG_ERR("[Fntdef] font %d has no name", e);
     else
     {
-        const unsigned char *ext;
-        ptrdiff_t it;
-
-        DVI_LOG_ERR("[Fntdef] font %d has name length a : %d and l : %d", e, a, l);
-        for (it = 0, ext = NULL; it < l; it++)
-        {
-            if (*(iter + a + it) == '.')
-                ext = iter + a + it;
-        }
-        name = (char *)malloc((a + l + (ext ? 4 : 0) + 1) * sizeof(char));
+        name = (char *)malloc((a + l + 1) * sizeof(char));
         if (name)
         {
-<<<<<<< HEAD
             memcpy(name, iter, a);
             memcpy(name + a, iter + a, l);
             name[a + l] = '\0';
-=======
-            /*
-             * could be done with 1 memcpy, but let's see what happens
-             * if i find a DVI file with a 'a' not equal to 0
-             */
-            memcpy(name, iter, a);
-            memcpy(name + a, iter + a, l);
-            /*
-             * Add .tfm to the file name if no extension [66]
-             *
-             * should be done below (f == nf) from dvitype, but
-             * not important for now
-             */
-            if (ext)
-                memcpy(name + a + l, ".tfm", 5);
-            else
-                name[a + l] = '\0';
-
->>>>>>> a5b9b2eb9895b00b8ec5de2e6a47bd6435ec01e5
             if ((scaled_size <= 0) || (design_size <= 0))
                 DVI_LOG_INFO("[Fntdef] Font %s found, not scaled.",
                              name);
@@ -329,7 +300,6 @@ dvi_font_define(const Dvi_Document *doc,
 
         const char *tfm_path;
 
-<<<<<<< HEAD
         /* Add .tfm to the file name if no extension [66] */
         if (name)
         {
@@ -358,13 +328,6 @@ dvi_font_define(const Dvi_Document *doc,
                 doc->fontes->fonts[nf].name = name;
             }
         }
-=======
-        /*
-         * Add .tfm to the file name if no extension [66]
-         *
-         * Is done above
-         */
->>>>>>> a5b9b2eb9895b00b8ec5de2e6a47bd6435ec01e5
 
         tfm_path = dvi_kpathsea_path_name_get(doc->fontes->fonts[nf].name);
         if (!tfm_path)
