@@ -171,9 +171,11 @@ static _dvi_kpathsea_find_glyph_t _dvi_kpathsea_find_glyph;
 static _dvi_kpathsea_open_file_t _dvi_kpathsea_open_file;
 static _dvi_kpathsea_finish_t _dvi_kpathsea_finish;
 
+static kpathsea _dvi_kpathsea_instance = NULL;
+
 #ifdef _WIN32
 
-static HMODULE _dvi_kpathsea_module;
+static HMODULE _dvi_kpathsea_module = NULL;
 
 static char *
 _dvi_kpathsea_dll_find(void)
@@ -324,35 +326,41 @@ dvi_kpath_sea_init(void)
     _dvi_kpathsea_finish = kpathsea_finish;
 #endif
 
+    _dvi_kpathsea_instance = _dvi_kpathsea_new();
+    if (!_dvi_kpathsea_instance)
+    {
+        DVI_LOG_ERR("kpathsea_new failed");
+#ifdef _WIN32
+        if (_dvi_kpathsea_module)
+            FreeLibrary(_dvi_kpathsea_module);
+#endif
+        return 0;
+    }
+
     return 1;
 }
 
 void
 dvi_kpathsea_shutdown(void)
 {
+    _dvi_kpathsea_finish(_dvi_kpathsea_instance);
 #ifdef _WIN32
     if (_dvi_kpathsea_module)
+    {
+        DVI_LOG_ERR("on libere le module");
         FreeLibrary(_dvi_kpathsea_module);
+    }
 #endif
 }
 
 const char *
 dvi_kpathsea_path_name_get(const char *name)
 {
-    kpathsea kpse;
     char *n;
 
-    kpse = _dvi_kpathsea_new();
-    if (!kpse)
-    {
-        DVI_LOG_ERR("_dvi_kpathsea_new");
-	return NULL;
-    }
-
-    _dvi_kpathsea_set_program_name(kpse, "kpsewhich", NULL);
-    _dvi_kpathsea_init_prog (kpse, "LIBDVI", 300, NULL, NULL);
-    n = _dvi_kpathsea_find_file(kpse, name, kpse_tfm_format, 1);
-    _dvi_kpathsea_finish(kpse);
+    _dvi_kpathsea_set_program_name(_dvi_kpathsea_instance, "kpsewhich", NULL);
+    _dvi_kpathsea_init_prog (_dvi_kpathsea_instance, "LIBDVI", 300, NULL, NULL);
+    n = _dvi_kpathsea_find_file(_dvi_kpathsea_instance, name, kpse_tfm_format, 1);
     return n;
 }
 

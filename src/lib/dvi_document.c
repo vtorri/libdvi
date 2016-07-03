@@ -191,6 +191,79 @@ dvi_document_new(const char *filename)
         goto free_comment;
     }
 
+    /* Count the pages and move to the starting page [102] [107] */
+    {
+        int q; /* signed quad [102] */
+        int p; /* back pointer, signed quad [102] */
+        int start_loc; /* start location, signed quad [101] */
+        int page_count; /* the total number of pages seen so far, signed quad [73] */
+        int k; /* opcode */
+
+        q = postamble_loc;
+        p = final_bop;
+        start_loc = -1;
+        page_count = 0;
+
+        if (p < 0)
+            return doc;
+
+        do
+        {
+            /* q points to a post or bop command and p >= 0 is the prev pointer */
+            if (p > (q - 46))
+            {
+                DVI_LOG_ERR("page link %d after byte %d", p, q);
+                goto free_comment;
+            }
+            q = p;
+            k = dvi_read_uint8(dvi_document_base_get(doc) + q);
+            if (k == DVI_OPCODE_BOP)
+                page_count++;
+            else
+            {
+                DVI_LOG_ERR("byte %d is not a bop", q);
+                goto free_comment;
+            }
+            p = dvi_read_sint32(dvi_document_base_get(doc) + q + 1 + 10 * sizeof(int));
+            start_loc = q;
+        } while (p >= 0);
+
+        if (start_loc < 0)
+        {
+            DVI_LOG_ERR("starting page number could not be found");
+            goto free_comment;
+        }
+
+        if (page_count != total_pages)
+        {
+            DVI_LOG_ERR("there are really %d pages, not %d !",
+                        page_count, total_pages);
+            goto free_comment;
+        }
+
+        DVI_LOG_INFO("Total number of pages: %d", total_pages);
+
+        doc->pages = dvi_pages_new(total_pages);
+        if (!doc->pages)
+        {
+            DVI_LOG_ERR("Could not allocate memory for pages");
+            goto free_comment;
+        }
+
+        q = postamble_loc;
+        p = final_bop;
+        page_count = 0;
+
+        do
+        {
+            q = p;
+            page_count++;
+            dvi_pages_page_add(doc->pages, total_pages - page_count,
+                               dvi_document_base_get(doc) + q + 1);
+            p = dvi_read_sint32(dvi_document_base_get(doc) + q + 1 + 10 * sizeof(int));
+        } while (p >= 0);
+    }
+
     return doc;
 
   free_comment:

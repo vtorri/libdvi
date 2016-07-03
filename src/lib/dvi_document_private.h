@@ -22,6 +22,7 @@
 #include "dvi_map.h"
 #include "dvi_stack.h"
 #include "dvi_font.h"
+#include "dvi_page.h"
 
 struct _Dvi_Document
 {
@@ -34,6 +35,8 @@ struct _Dvi_Document
     double tfm_conv;
     Dvi_Stack *stack;
     Dvi_Fonts *fontes;
+    Dvi_Pages *pages;
+    int total_pages;
 };
 
 static __inline__ const unsigned char *

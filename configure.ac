@@ -105,17 +105,19 @@ fi
 
 ### Checks for libraries
 
-if test "x${have_win32}" = "xno" ; then
-   AC_SEARCH_LIBS([kpathsea_new], [kpathsea], [have_kpathsea="yes"], [have_kpathsea="no"])
+AC_SEARCH_LIBS([kpathsea_new], [kpathsea], [have_kpathsea_lib="yes"], [have_kpathsea_lib="no"])
+if test "x${have_kpathsea_lib}" = "xyes" ; then
+   AC_DEFINE([HAVE_KPATHSEA_LIB], [1], [Define to 1 if kpathsea library is found])
 fi
 
 ### Checks for header files
 
-if test "x${have_win32}" = "xno"  && test "x${have_kpathsea}" = "xyes" ; then
-   AC_CHECK_HEADERS([kpathsea.h], [have_kpathsea="yes"], [have_kpathsea="no"])
-   if test "x${have_kpathsea}" = "xno" ; then
-      AC_CHECK_HEADERS([kpathsea/kpathsea.h], [have_kpathsea="yes"], [have_kpathsea="no"])
-   fi
+AC_CHECK_HEADERS([kpathsea.h], [have_kpathsea_header="yes"], [have_kpathsea_header="no"])
+if test "x${have_kpathsea_header}" = "xno" ; then
+   AC_CHECK_HEADERS([kpathsea/kpathsea.h], [have_kpathsea_header="yes"], [have_kpathsea_header="no"])
+fi
+if test "x${have_kpathsea_header}" = "xyes" ; then
+   AC_DEFINE([HAVE_KPATHSEA_HEADER], [1], [Define to 1 if kpathsea header is found])
 fi
 
 ### Checks for types
@@ -168,18 +170,15 @@ echo "  kpsewhich............: ${KPSEWHICH}"
 else
 echo "  kpsewhich............: no"
 fi
-if test "x${have_win32}" = "xno" ; then
-echo "  kpathsea feature.....: ${have_kpathsea}"
-else
-echo "  kpathsea feature.....: ${kpathsea_dll}"
-fi
+echo "  kpathsea library.....: ${have_kpathsea_lib}"
+echo "  kpathsea header......: ${have_kpathsea_header}"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  Environment flags....:"
 echo "    CPPFLAGS...........: $CPPFLAGS"
 echo "    CFLAGS.............: $CFLAGS"
 echo "    LDFLAGS............: $LDFLAGS"
-echo "  libdviflags..........:"
+echo "  libdvi flags.........:"
 echo "    DVI_CFLAGS.........: ${DVI_CFLAGS}"
 echo
 echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"

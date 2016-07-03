@@ -12,6 +12,7 @@ src/lib/dvi_kpathsea.c \
 src/lib/dvi_log.c \
 src/lib/dvi_main.c \
 src/lib/dvi_map.c \
+src/lib/dvi_page.c \
 src/lib/dvi_process.c \
 src/lib/dvi_stack.c \
 src/lib/dvi_document.h \
@@ -22,6 +23,7 @@ src/lib/dvi_kpathsea.h \
 src/lib/dvi_log.h \
 src/lib/dvi_map.h \
 src/lib/dvi_opcodes.h \
+src/lib/dvi_page.h \
 src/lib/dvi_private.h \
 src/lib/dvi_process.h \
 src/lib/dvi_stack.h
