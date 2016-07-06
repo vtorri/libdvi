@@ -41,11 +41,11 @@ struct _Dvi_Pages
 
 struct _Dvi_Page
 {
-    int loc; /* location in file, signed quad [101] */
+    const unsigned char *loc; /* location in file */
 };
 
 static Dvi_Page *
-dvi_page_new(int loc)
+dvi_page_new(const unsigned char *loc)
 {
     Dvi_Page *page;
 
