@@ -1,0 +1,27 @@
+name: ci_meson
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        sudo apt-get -qq update
+        sudo apt install build-essential meson ninja-build python3-pip python3-setuptools
+        pip3 install --upgrade pip
+        pip3 install meson --user
+    - name: Build Entice
+      run: |
+        mkdir builddir && cd builddir
+        meson .. --prefix=/opt/libdvi
+        ninja
