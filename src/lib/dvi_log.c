@@ -220,7 +220,7 @@ _dvi_log_fprint_cb(FILE *stream,
     else
 #endif
     _dvi_log_posix_print_prefix_func(stream, level, file, fct, line);
-    res = fprintf(stream, str);
+    res = fprintf(stream, "%s", str);
     free(str);
 
     if (res < 0)
