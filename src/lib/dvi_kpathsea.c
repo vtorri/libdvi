@@ -18,29 +18,36 @@
 
 #include <config.h>
 
-#include <stdlib.h>
-#include <string.h>
+#ifdef HAVE_KPATHSEA
 
-#include <stdio.h> /* for kpathsea */
+# include <stdlib.h>
+# include <string.h>
 
-#ifdef HAVE_KPATHSEA_H
-# include <kpathsea.h>
-#elif defined HAVE_KPATHSEA_KPATHSEA_H
-# include <kpathsea/kpathsea.h>
-#endif
+# include <stdio.h> /* for kpathsea */
 
-#ifdef _WIN32
-# ifndef WIN32_LEAN_AND_MEAN
-#  define WIN32_LEAN_AND_MEAN
+# ifdef HAVE_KPATHSEA_KPATHSEA_H
+#  include <kpathsea/kpathsea.h>
+# elif defined HAVE_KPATHSEA_H
+#  include <kpathsea.h>
 # endif
-# include <windows.h>
-# undef WIN32_LEAN_AND_MEAN
-#endif
 
-#include "Dvi.h"
-#include "dvi_private.h"
-#include "dvi_log.h"
-#include "dvi_kpathsea.h"
+# ifdef _WIN32
+#  ifndef WIN32_LEAN_AND_MEAN
+#   define WIN32_LEAN_AND_MEAN
+#  endif
+#  include <windows.h>
+#  undef WIN32_LEAN_AND_MEAN
+# endif
+
+# include "Dvi.h"
+# include "dvi_private.h"
+# include "dvi_log.h"
+# include "dvi_kpathsea.h"
+# ifdef HAVE_MIKTEX
+#  include "dvi_kpathsea_miktex.h"
+# endif
+
+#endif /* HAVE_KPATHSEA */
 
 
 /*============================================================================*
@@ -50,93 +57,6 @@
 /**
  * @cond LOCAL
  */
-
-#ifdef _WIN32
-
-typedef void* kpathsea;
-
-typedef enum
-{
-  kpse_gf_format,
-  kpse_pk_format,
-  kpse_any_glyph_format,        /* ``any'' meaning gf or pk */
-  kpse_tfm_format,
-  kpse_afm_format,
-  kpse_base_format,
-  kpse_bib_format,
-  kpse_bst_format,
-  kpse_cnf_format,
-  kpse_db_format,
-  kpse_fmt_format,
-  kpse_fontmap_format,
-  kpse_mem_format,
-  kpse_mf_format,
-  kpse_mfpool_format,
-  kpse_mft_format,
-  kpse_mp_format,
-  kpse_mppool_format,
-  kpse_mpsupport_format,
-  kpse_ocp_format,
-  kpse_ofm_format,
-  kpse_opl_format,
-  kpse_otp_format,
-  kpse_ovf_format,
-  kpse_ovp_format,
-  kpse_pict_format,
-  kpse_tex_format,
-  kpse_texdoc_format,
-  kpse_texpool_format,
-  kpse_texsource_format,
-  kpse_tex_ps_header_format,
-  kpse_troff_font_format,
-  kpse_type1_format,
-  kpse_vf_format,
-  kpse_dvips_config_format,
-  kpse_ist_format,
-  kpse_truetype_format,
-  kpse_type42_format,
-  kpse_web2c_format,
-  kpse_program_text_format,
-  kpse_program_binary_format,
-  kpse_miscfonts_format,
-  kpse_web_format,
-  kpse_cweb_format,
-  kpse_enc_format,
-  kpse_cmap_format,
-  kpse_sfd_format,
-  kpse_opentype_format,
-  kpse_pdftex_config_format,
-  kpse_lig_format,
-  kpse_texmfscripts_format,
-  kpse_lua_format,
-  kpse_fea_format,
-  kpse_cid_format,
-  kpse_mlbib_format,
-  kpse_mlbst_format,
-  kpse_clua_format,
-  kpse_ris_format,
-  kpse_bltxml_format,
-  kpse_last_format /* one past last index */
-} kpse_file_format_type;
-
-typedef enum
-{
-  kpse_glyph_source_normal,  /* the searched-for font: already existed */
-  kpse_glyph_source_alias,   /* : was an alias for an existing file */
-  kpse_glyph_source_maketex, /* : was created on the fly */
-  kpse_glyph_source_fallback /* : wasn't found, but the fallback font was */
-} kpse_glyph_source_type;
-
-
-typedef struct
-{
-  const char *name;              /* font name found */
-  unsigned int dpi;              /* size found, for glyphs */
-  kpse_file_format_type format;  /* glyph format found */
-  kpse_glyph_source_type source; /* where we found it */
-} kpse_glyph_file_type;
-
-#endif
 
 typedef kpathsea (*_dvi_kpathsea_new_t)(void);
 typedef void (*_dvi_kpathsea_set_program_name_t)(kpathsea kpse,
@@ -309,9 +229,10 @@ _dvi_kpathsea_functions_set(void)
  *============================================================================*/
 
 unsigned char
-dvi_kpath_sea_init(void)
+dvi_kpathsea_init(void)
 {
-#ifdef _WIN32
+#ifdef HAVE_KPATHSEA
+#ifdef HAVE_MIKTEX
     if (!_dvi_kpathsea_functions_set())
         return 0;
 #else
@@ -328,7 +249,7 @@ dvi_kpath_sea_init(void)
     if (!_dvi_kpathsea_instance)
     {
         DVI_LOG_ERR("kpathsea_new failed");
-#ifdef _WIN32
+#ifdef HAVE_MIKTEX
         if (_dvi_kpathsea_module)
             FreeLibrary(_dvi_kpathsea_module);
 #endif
@@ -336,30 +257,41 @@ dvi_kpath_sea_init(void)
     }
 
     return 1;
+#else
+    return 0;
+#endif
 }
 
 void
 dvi_kpathsea_shutdown(void)
 {
+#ifdef HAVE_KPATHSEA
     _dvi_kpathsea_finish(_dvi_kpathsea_instance);
-#ifdef _WIN32
+#ifdef HAVE_MIKTEX
     if (_dvi_kpathsea_module)
     {
         DVI_LOG_ERR("on libere le module");
         FreeLibrary(_dvi_kpathsea_module);
     }
 #endif
+#endif
 }
 
 const char *
 dvi_kpathsea_path_name_get(const char *name)
 {
+#ifdef HAVE_KPATHSEA
     char *n;
 
     _dvi_kpathsea_set_program_name(_dvi_kpathsea_instance, "kpsewhich", NULL);
     _dvi_kpathsea_init_prog (_dvi_kpathsea_instance, "LIBDVI", 300, NULL, NULL);
     n = _dvi_kpathsea_find_file(_dvi_kpathsea_instance, name, kpse_tfm_format, 1);
     return n;
+#else
+    return NULL;
+
+    (void)name;
+#endif
 }
 
 

@@ -54,10 +54,10 @@ static const char *_dvi_log_level_names[] =
     "DBG"
 };
 
-#ifdef _DEBUG
-static Dvi_Log_Level _dvi_log_level = DVI_LOG_LEVEL_DBG;
-#else
+#ifdef NDEBUG
 static Dvi_Log_Level _dvi_log_level = DVI_LOG_LEVEL_ERR;
+#else
+static Dvi_Log_Level _dvi_log_level = DVI_LOG_LEVEL_DBG;
 #endif
 
 static Dvi_Log_Print_Cb _dvi_log_print_cb = dvi_log_print_cb_stderr;

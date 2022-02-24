@@ -56,7 +56,7 @@ dvi_init(void)
 
     dvi_log_init();
 
-    if (!dvi_kpath_sea_init())
+    if (!dvi_kpathsea_init())
       return --_dvi_init_count;
 
     return _dvi_init_count;
