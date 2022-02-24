@@ -22,7 +22,7 @@
 #include <stdarg.h>
 
 #define DVI_LOG(l, ...) \
-    dvi_log_print(l, __FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
+    dvi_log_print(l, __FILE__, __func__, __LINE__, __VA_ARGS__)
 
 #define DVI_LOG_ERR(...) \
     DVI_LOG(DVI_LOG_LEVEL_ERR, __VA_ARGS__)
