@@ -18,6 +18,9 @@ libdvi_cflags = dev_cflags
 
 if sys_windows
   libdvi_cflags += '-DDVI_BUILD'
+else
+# strdup is not in the c99 standard (!)
+  libdvi_cflags += '-D_POSIX_C_SOURCE=200809L'
 endif
 
 if get_option('buildtype') == 'release'
