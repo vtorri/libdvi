@@ -287,5 +287,5 @@ dvi_document_del(Dvi_Document *doc)
     free(doc->comment);
     dvi_map_del(doc->map);
     free(doc->filename);
-    free(doc)
+    free(doc);
 }
