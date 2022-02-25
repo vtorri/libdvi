@@ -1,3 +1,5 @@
+[![CI meson](https://github.com/vtorri/libdvi/actions/workflows/ci_meson.yml/badge.svg)](https://github.com/vtorri/libdvi/actions?query=workflow%3A%22GitHub+CI%22)
+
 ### libdvi
 
 #### DVI rendering library written in C99
