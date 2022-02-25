@@ -1,4 +1,4 @@
-name: ci_meson
+name: meson CI
 
 on:
   push:
