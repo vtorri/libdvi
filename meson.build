@@ -8,6 +8,7 @@ project('libdvi', 'c',
     'werror=true',
     'c_std=c99'
   ],
+  license : 'LGPL-2.1',
   meson_version : '>=0.53'
 )
 
@@ -104,6 +105,7 @@ configure_file(output : 'config.h', configuration : config_h)
 # output
 
 summary({'OS': host_os,
+         'license': meson.project_license(),
          'release mode': get_option('buildtype') == 'release' ? 'yes' : 'no',
          'kpathsea dist.': have_texlive ? 'TeXLive' : 'MIKTeX',
         }, section: 'Configuration Options Summary:')

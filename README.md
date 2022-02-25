@@ -26,7 +26,7 @@ ninja install
 
 #### On Windows, using MSYS2, 64 bits
 
-Install TeXLive with pacman, then
+Install TeXLive with `pacman -S mingw-w64-x86_64-texlive`, then
 
 ```
 meson buildir --prefix=/foo/bar -Dkpathsea-name=kpathsea-6 -Dkpathsea-path=/mingw64/bin
@@ -34,6 +34,10 @@ cd builddir
 ninja install
 ```
 
+If TeXLive is installed outside MSYS2, replace the name of kpathsea
+if it is different from `kpathsea-6` (unlikely though) and its location
+in the `meson` command above.
+
 If MIKTeX is installed instead of TeXLive, replace the name of kpathsea
-(usually something like MIKTEX211200-kpathsea) and its location in the
-meson command above.
+(usually something like `MIKTEX211200-kpathsea`) and its location in the
+`meson` command above.
