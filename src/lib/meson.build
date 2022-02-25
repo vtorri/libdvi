@@ -32,31 +32,16 @@ endif
 
 # kpathsea
 
-have_miktex = false
-have_texlive = false
+kpathsea_dep = cc.find_library(get_option('kpathsea-name'),
+  dirs : get_option('kpathsea-path'),
+  required : true
+)
 
-kpathsea_dep = cc.find_library('kpathsea', required : false)
-if kpathsea_dep.found() == true
-  header_checks = ['kpathsea/kpathsea.h', 'kpathsea.h' ]
-  foreach header : header_checks
-    if cc.has_header(header)
-      config_h.set10('HAVE_'+header.underscorify().to_upper(), true)
-      have_texlive = true
-      config_h.set10('HAVE_TEXLIVE', true)
-      break
-    endif
-  endforeach
-else
-  kpathsea_dep = cc.find_library('MIKTeX211200-kpathsea', required : false)
-  if kpathsea_dep.found() == true
-    have_miktex = true
-    config_h.set10('HAVE_MIKTEX', true)
-  endif
-endif
+have_texlive = cc.has_function('kpathsea_new',
+  dependencies : kpathsea_dep
+)
 
-if have_texlive or have_miktex
-  config_h.set10('HAVE_KPATHSEA', true)
-endif
+config_h.set10('HAVE_TEXLIVE', have_texlive)
 
 libdvi_lib = library('libdvi', libdvi_src,
   c_args : libdvi_cflags,

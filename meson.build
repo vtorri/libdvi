@@ -4,9 +4,8 @@ project('libdvi', 'c',
   default_options : [
     'buildtype=debugoptimized',
     'b_ndebug=if-release',
-    'warning_level=1',
-#    'warning_level=3',
-#    'werror=true',
+    'warning_level=3',
+    'werror=true',
     'c_std=c99'
   ],
   meson_version : '>=0.53'
@@ -104,17 +103,9 @@ configure_file(output : 'config.h', configuration : config_h)
 
 # output
 
-if have_texlive
-  kpathsea_output = 'yes (TeXLive)'
-elif have_miktex
-  kpathsea_output = 'yes (MIKTeX)'
-else
-  kpathsea_output = 'no'
-endif
-
 summary({'OS': host_os,
          'release mode': get_option('buildtype') == 'release' ? 'yes' : 'no',
-         'kpathsea': kpathsea_output,
+         'kpathsea dist.': have_texlive ? 'TeXLive' : 'MIKTeX',
         }, section: 'Configuration Options Summary:')
 
 summary({'prefix': dir_prefix,

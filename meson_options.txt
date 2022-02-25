@@ -1,0 +1,12 @@
+
+option('kpathsea-name',
+  type: 'string',
+  value: 'kpathsea',
+  description: 'name of the kpathsea shared library, without prefix lib and extension'
+)
+
+option('kpathsea-path',
+  type: 'string',
+  value: '/usr/lib',
+  description: 'full path of the kpathsea shared library'
+)

@@ -16,8 +16,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
-#ifndef DVI_KPATHSEA_MIKTEX_H
-#define DVI_KPATHSEA_MIKTEX_H
+#ifndef DVI_KPATHSEA_PRIVATE_H
+#define DVI_KPATHSEA_PRIVATE_H
 
 typedef void* kpathsea;
 
@@ -104,6 +104,8 @@ typedef struct
 
 kpathsea kpathsea_new(void);
 
+#ifdef HAVE_TEXLIVE
+
 void kpathsea_set_program_name(kpathsea kpse,
                                const char *argv0,
                                const char *progname);
@@ -131,4 +133,35 @@ FILE *kpathsea_open_file(kpathsea kpse,
 
 void kpathsea_finish(kpathsea kpse);
 
-#endif /* DVI_KPATHSEA_MIKTEX_H */
+#else
+
+void miktex_kpathsea_set_program_name(kpathsea kpse,
+                                      const char *argv0,
+                                      const char *progname);
+
+void miktex_kpathsea_init_prog(kpathsea kpse,
+                               const char *prefix,
+                               unsigned int dpi,
+                               const char *mode,
+                               const char *fallback);
+
+char *miktex_kpathsea_find_file(kpathsea kpse,
+                                const char *name,
+                                kpse_file_format_type format,
+                                int must_exist);
+
+char *miktex_kpathsea_find_glyph(kpathsea kpse,
+                                 const char *font_name,
+                                 unsigned int dpi,
+                                 kpse_file_format_type format,
+                                 kpse_glyph_file_type *glyph_file);
+
+FILE *miktex_kpathsea_open_file(kpathsea kpse,
+                                const char *name,
+                                kpse_file_format_type format);
+
+void miktex_kpathsea_finish(kpathsea kpse);
+
+#endif /* HAVE_TEXLIVE */
+
+#endif /* DVI_KPATHSEA_PRIVATE_H */
