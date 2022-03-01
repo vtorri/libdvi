@@ -1,4 +1,5 @@
-[![Github Build status](https://github.com/vtorri/libdvi/actions/workflows/ci_meson.yml/badge.svg)](https://github.com/vtorri/libdvi/actions?query=workflow%3A%22GitHub+CI%22)
+[![Github Build status](https://github.com/vtorri/libdvi/actions/workflows/ci_linux.yml/badge.svg)](https://github.com/vtorri/libdvi/actions?query=workflow%3A%22GitHub+CI%22)
+[![Github Build status](https://github.com/vtorri/libdvi/actions/workflows/ci_msys2.yml/badge.svg)](https://github.com/vtorri/libdvi/actions?query=workflow%3A%22GitHub+CI%22)
 
 ### libdvi
 
