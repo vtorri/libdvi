@@ -11,27 +11,42 @@ This application is released under the LGPL 2.1 or later
 ### Requirements
 
 The kpathsea library (provided by TeXLive or MIKTeX) is required.
-Preferably install TeXLive
+Preferably install TeXLive.
 
+To compile libdvi, you will need `meson` and `ninja` and a C99 compiler.
+Refer to your distribution to install them.
 
 ### Compilation and installation
 
 #### On UNIX (linux, BSD, Mac OSX, Solaris
 
+Normally, if TeXLive is installed, the kpathsea library is also installed
+and should be detected without any problem. Or you can also install just
+the `kpathsea` library. For example, on Ubuntu :
+
+```
+sudo apt instal libkpathsea-dev
+```
+
+And to build `libdvi`:
+
 ```
 meson buildir --prefix=/foo/bar
-cd builddir
-ninja install
+meson compile -C builddir
 ```
 
 #### On Windows, using MSYS2, 64 bits
 
-Install TeXLive with `pacman -S mingw-w64-x86_64-texlive`, then
+Install TeXLive with `pacman -S mingw-w64-x86_64-texlive`. You can also
+install just the kpathsea package with `pacman -S mingw-w64-x86_64-texlive-bin`.
+The name of the DLL is (with latest TeXLive version) `libkpathsea-6.dll`.
+So pass the `-Dkpathsea-name` meson option the name of the DLL without
+the `lib` prefix and without the extension. Pass also the full path to
+the binary directory where the DLL is located. For example :
 
 ```
 meson buildir --prefix=/foo/bar -Dkpathsea-name=kpathsea-6 -Dkpathsea-path=/mingw64/bin
-cd builddir
-ninja install
+meson compile -C builddir
 ```
 
 If TeXLive is installed outside MSYS2, replace the name of kpathsea

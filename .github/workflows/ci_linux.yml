@@ -1,4 +1,4 @@
-name: meson CI
+name: Linux CI
 
 on:
   push:
@@ -22,6 +22,5 @@ jobs:
         pip3 install meson --user
     - name: Build libdvi
       run: |
-        mkdir builddir && cd builddir
-        meson .. --prefix=/opt/libdvi
-        ninja
+        meson setup builddir
+        meson compile -C builddir
