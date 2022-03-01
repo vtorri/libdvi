@@ -22,16 +22,17 @@ Refer to your distribution to install them.
 
 Normally, if TeXLive is installed, the kpathsea library is also installed
 and should be detected without any problem. Or you can also install just
-the `kpathsea` library. For example, on Ubuntu :
+the `kpathsea` library. Also update meson. For example, on Ubuntu :
 
 ```
 sudo apt instal libkpathsea-dev
+sudo pip3 install meson==0.55.3
 ```
 
 And to build `libdvi`:
 
 ```
-meson buildir --prefix=/foo/bar
+meson setup buildir --prefix=/foo/bar
 meson compile -C builddir
 ```
 
@@ -45,7 +46,7 @@ the `lib` prefix and without the extension. Pass also the full path to
 the binary directory where the DLL is located. For example :
 
 ```
-meson buildir --prefix=/foo/bar -Dkpathsea-name=kpathsea-6 -Dkpathsea-path=/mingw64/bin
+meson setup buildir --prefix=/foo/bar -Dkpathsea-name=kpathsea-6 -Dkpathsea-path=/mingw64/bin
 meson compile -C builddir
 ```
 
