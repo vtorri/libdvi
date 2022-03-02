@@ -3,7 +3,7 @@
 
 ### libdvi
 
-#### DVI rendering library written in C99
+DVI rendering library written in C99
 
 ### License
 

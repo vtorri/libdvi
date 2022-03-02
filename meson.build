@@ -97,6 +97,7 @@ config_h.set_quoted('PACKAGE_DATA_DIR', dir_data)
 config_h.set_quoted('LOCALEDIR', dir_locale)
 
 subdir('src/lib')
+subdir('src/bin')
 
 # Use config_h after all subdirs have set values
 
