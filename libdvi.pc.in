@@ -4,10 +4,10 @@ libdir=@libdir@
 includedir=@includedir@
 pkgincludedir=@pkgincludedir@-@VMAJ@
 
-Name: $PACKAGE
+Name: @PACKAGE_NAME@
 Description: DVI file interpreter
-Version: @VERSION@
+Version: @PACKAGE_VERSION@
 Requires.private:
 Libs: -L${libdir} -ldvi
-Libs.private:
 Cflags: -I${pkgincludedir}
+Cflags.private: -DDVI_STATIC
