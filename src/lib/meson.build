@@ -16,21 +16,15 @@ inc_dir = include_directories('.')
 
 libdvi_cflags = dev_cflags
 
-if sys_windows
+if sys_windows == true
   libdvi_cflags += '-DDVI_BUILD'
 else
 # strdup is not in the c99 standard (!)
   libdvi_cflags += '-D_POSIX_C_SOURCE=200809L'
 endif
 
-if get_option('buildtype') == 'release'
-  libdvi_cflags += '-DNDEBUG'
-else
-  libdvi_cflags += '-D_DEBUG'
-endif
-
-if get_option('default_library') == 'shared'
-  libdvi_cflags += '-DDLL_EXPORT'
+if get_option('default_library') == 'static'
+  libdvi_cflags += '-DDVI_STATIC'
 endif
 
 # kpathsea
@@ -46,7 +40,11 @@ have_texlive = cc.has_function('kpathsea_new',
 
 config_h.set10('HAVE_TEXLIVE', have_texlive)
 
-libdvi_lib = library('libdvi', libdvi_src,
+# kpsewhich
+
+find_program('kpsewhich', required : true)
+
+libdvi_lib = library('dvi', libdvi_src,
   c_args : libdvi_cflags,
   dependencies : kpathsea_dep,
   gnu_symbol_visibility: 'hidden',
