@@ -47,7 +47,7 @@ static int _dvi_init_count = 0;
  *                                   API                                      *
  *============================================================================*/
 
-DAPI int
+DVI_API int
 dvi_init(void)
 {
 
@@ -62,7 +62,7 @@ dvi_init(void)
     return _dvi_init_count;
 }
 
-DAPI int
+DVI_API int
 dvi_shutdown(void)
 {
     if (_dvi_init_count <= 0)

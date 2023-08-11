@@ -62,7 +62,7 @@
  * @li Process the postamble [107] [103]
  * @li Process the font definition of the postamble [107] [103] [106] [59] [61]
  */
-DAPI Dvi_Document *
+DVI_API Dvi_Document *
 dvi_document_new(const char *filename)
 {
     Dvi_Document *doc;
@@ -258,7 +258,8 @@ dvi_document_new(const char *filename)
             page_count++;
             dvi_pages_page_add(doc->pages, total_pages - page_count,
                                dvi_document_base_get(doc) + q + 1);
-            p = dvi_read_sint32(dvi_document_base_get(doc) + q + 1 + 10 * sizeof(int));
+            p = dvi_read_sint32(dvi_document_base_get(doc) +
+                                q + 1 + 10 * sizeof(int));
         } while (p >= 0);
     }
 
@@ -276,7 +277,7 @@ dvi_document_new(const char *filename)
     return NULL;
 }
 
-DAPI void
+DVI_API void
 dvi_document_del(Dvi_Document *doc)
 {
     if (!doc)

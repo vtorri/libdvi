@@ -54,32 +54,32 @@ typedef void (*Dvi_Log_Print_Cb)(Dvi_Log_Level level,
 				 void *data,
 				 va_list args);
 
-DAPI void dvi_log_print_cb_set(Dvi_Log_Print_Cb cb, void *data);
+DVI_API void dvi_log_print_cb_set(Dvi_Log_Print_Cb cb, void *data);
 
-DAPI void dvi_log_print_cb_stderr(Dvi_Log_Level level,
-				  const char *file,
-				  const char *fct,
-				  int line,
-				  const char *fmt,
-				  void *data,
-				  va_list args);
+DVI_API void dvi_log_print_cb_stderr(Dvi_Log_Level level,
+                                     const char *file,
+                                     const char *fct,
+                                     int line,
+                                     const char *fmt,
+                                     void *data,
+                                     va_list args);
 
-DAPI void dvi_log_print_cb_stdout(Dvi_Log_Level level,
-				  const char *file,
-				  const char *fct,
-				  int line,
-				  const char *fmt,
-				  void *data,
-				  va_list args);
+DVI_API void dvi_log_print_cb_stdout(Dvi_Log_Level level,
+                                     const char *file,
+                                     const char *fct,
+                                     int line,
+                                     const char *fmt,
+                                     void *data,
+                                     va_list args);
 
-DAPI void dvi_log_print(Dvi_Log_Level level,
-			const char *file,
-			const char *fct,
-			int line,
-			const char *fmt, ...);
+DVI_API void dvi_log_print(Dvi_Log_Level level,
+                           const char *file,
+                           const char *fct,
+                           int line,
+                           const char *fmt, ...);
 
-DAPI void dvi_log_level_set(Dvi_Log_Level level);
+DVI_API void dvi_log_level_set(Dvi_Log_Level level);
 
-DAPI Dvi_Log_Level dvi_log_level_get(void);
+DVI_API Dvi_Log_Level dvi_log_level_get(void);
 
 #endif /* DVI_LOG_H */

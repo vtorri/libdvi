@@ -102,7 +102,7 @@ dvi_interpreter_preamble_parse(const Dvi_Document *doc,
     *id = dvi_read_uint8(cur_loc);
     if ((*id != 2) && (*id != 3) && (*id != 5))
     {
-        DVI_LOG_ERR("[Preamble] wrong identifer byte: %u (should be2, 3 or 5)", *id);
+        DVI_LOG_ERR("[Preamble] wrong identifer byte: %u (should be 2, 3 or 5)", *id);
         return 0;
     }
 
@@ -154,7 +154,7 @@ dvi_interpreter_preamble_parse(const Dvi_Document *doc,
             memcpy(c, ++cur_loc, k);
             c[k] = '\0';
             *comment = c;
-            DVI_LOG_INFO("[Preamble] comment: %s", *comment);
+            DVI_LOG_INFO("[Preamble] comment: \"%s\"", *comment);
         }
         else
         {

@@ -281,7 +281,7 @@ dvi_log_init(void)
  *============================================================================*/
 
 
-DAPI void
+DVI_API void
 dvi_log_print_cb_set(Dvi_Log_Print_Cb cb, void *data)
 {
     _dvi_log_print_cb = cb;
@@ -289,7 +289,7 @@ dvi_log_print_cb_set(Dvi_Log_Print_Cb cb, void *data)
 }
 
 
-void
+DVI_API void
 dvi_log_print_cb_stderr(Dvi_Log_Level level,
                         const char *file,
                         const char *fct,
@@ -301,7 +301,7 @@ dvi_log_print_cb_stderr(Dvi_Log_Level level,
     _dvi_log_fprint_cb(stderr, level, file, fct, line, fmt, data, args);
 }
 
-void
+DVI_API void
 dvi_log_print_cb_stdout(Dvi_Log_Level level,
                         const char *file,
                         const char *fct,
@@ -313,7 +313,7 @@ dvi_log_print_cb_stdout(Dvi_Log_Level level,
     _dvi_log_fprint_cb(stdout, level, file, fct, line, fmt, data, args);
 }
 
-void
+DVI_API void
 dvi_log_print(Dvi_Log_Level level,
               const char *file,
               const char *fct,
@@ -336,7 +336,7 @@ dvi_log_print(Dvi_Log_Level level,
     va_end(args);
 }
 
-void dvi_log_level_set(Dvi_Log_Level level)
+DVI_API void dvi_log_level_set(Dvi_Log_Level level)
 {
     if ((level < DVI_LOG_LEVEL_ERR) || (level >= DVI_LOG_LEVEL_LAST))
     {
@@ -347,7 +347,7 @@ void dvi_log_level_set(Dvi_Log_Level level)
     _dvi_log_level = level;
 }
 
-Dvi_Log_Level
+DVI_API Dvi_Log_Level
 dvi_log_level_get(void)
 {
     return _dvi_log_level;

@@ -21,8 +21,8 @@
 
 typedef struct _Dvi_Document Dvi_Document;
 
-DAPI Dvi_Document *dvi_document_new(const char *filename);
+DVI_API Dvi_Document *dvi_document_new(const char *filename);
 
-DAPI void dvi_document_del(Dvi_Document *doc);
+DVI_API void dvi_document_del(Dvi_Document *doc);
 
 #endif /* DVI_DOCUMENT_H */

@@ -19,39 +19,32 @@
 #ifndef DVI_H
 #define DVI_H
 
-#ifdef DAPI
-# undef DAPI
+#ifdef DVI_API
+# undef DVI_API
 #endif
 
-#ifdef _WIN32
-# ifdef DVI_BUILD
-#  ifdef DLL_EXPORT
-#   define DAPI __declspec(dllexport)
+#ifndef DVI_STATIC
+# ifdef _WIN32
+#  ifdef DVI_BUILD
+#   define DVI_API __declspec(dllexport)
 #  else
-#   define DAPI
+#   define DVI_API __declspec(dllimport)
 #  endif
+# elif defined __SUNPRO_C || defined __SUNPRO_CC
+#  define DVI_API __global
+# elif (defined __GNUC__ && __GNUC__ >= 4) || defined __INTEL_COMPILER
+#  define DVI_API __attribute__ ((visibility("default")))
 # else
-#  define DAPI __declspec(dllimport)
+#  define DVI_API
 # endif
 #else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define DAPI __attribute__ ((visibility("default")))
-#  else
-#   define DAPI
-#  endif
-# else
-#  define DAPI
-# endif
+# define DVI_API
 #endif
 
-DAPI int dvi_init(void);
-DAPI int dvi_shutdown(void);
+DVI_API int dvi_init(void);
+DVI_API int dvi_shutdown(void);
 
 #include "dvi_log.h"
 #include "dvi_document.h"
-
-#undef DAPI
-#define DAPI
 
 #endif /* DVI_H */
