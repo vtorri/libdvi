@@ -1,5 +1,6 @@
 [![Github Build status](https://github.com/vtorri/libdvi/actions/workflows/ci_linux.yml/badge.svg)](https://github.com/vtorri/libdvi/actions?query=workflow%3A%22GitHub+CI%22)
 [![Github Build status](https://github.com/vtorri/libdvi/actions/workflows/ci_msys2.yml/badge.svg)](https://github.com/vtorri/libdvi/actions?query=workflow%3A%22GitHub+CI%22)
+[![CodeFactor](https://www.codefactor.io/repository/github/vtorri/libdvi/badge)](https://www.codefactor.io/repository/github/vtorri/libdvi)
 
 ### libdvi
 
