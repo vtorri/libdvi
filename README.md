@@ -33,8 +33,8 @@ sudo pip3 install meson==0.55.3
 And to build `libdvi`:
 
 ```
-meson setup buildir --prefix=/foo/bar
-meson compile -C builddir
+meson setup builddir --prefix=/foo/bar
+ninja -C builddir
 ```
 
 #### On Windows, using MSYS2, 64 bits
@@ -47,8 +47,8 @@ the `lib` prefix and without the extension. Pass also the full path to
 the binary directory where the DLL is located. For example :
 
 ```
-meson setup buildir --prefix=/foo/bar -Dkpathsea-name=kpathsea-6 -Dkpathsea-path=/mingw64/bin
-meson compile -C builddir
+meson setup builddir --prefix=/foo/bar -Dkpathsea-name=kpathsea-6 -Dkpathsea-path=/mingw64/bin
+ninja -C builddir
 ```
 
 If TeXLive is installed outside MSYS2, replace the name of kpathsea
