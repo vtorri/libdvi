@@ -118,7 +118,7 @@ pkgconf.set('PACKAGE_NAME', meson.project_name())
 pkg_install_dir = '@0@/pkgconfig'.format(get_option('libdir'))
 
 configure_file(
-  input : join_paths(meson.source_root(), 'libdvi.pc.in'),
+  input : 'libdvi.pc.in',
   output : 'libdvi.pc',
   configuration : pkgconf,
   install_dir : pkg_install_dir
