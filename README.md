@@ -27,7 +27,7 @@ and should be detected without any problem. Or you can also install just
 the `kpathsea` library. Also update meson. For example, on Ubuntu :
 
 ```
-sudo apt instal libkpathsea-dev
+sudo apt instal libkpathsea-dev texlive-binaries
 sudo pip3 install meson==0.55.3
 ```
 

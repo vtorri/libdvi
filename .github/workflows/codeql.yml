@@ -75,7 +75,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get -qq update
-        sudo apt install build-essential meson ninja-build python3-pip python3-setuptools libkpathsea-dev
+        sudo apt install build-essential meson ninja-build python3-pip python3-setuptools libkpathsea-dev texlive-binaries
         pip3 install --upgrade pip
         pip3 install meson==0.56.0 --user
     - name: Build libdvi
