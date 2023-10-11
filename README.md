@@ -28,7 +28,7 @@ the `kpathsea` library. Also update meson. For example, on Ubuntu :
 
 ```
 sudo apt instal libkpathsea-dev texlive-binaries
-sudo pip3 install meson==0.55.3
+pip3 install --user meson
 ```
 
 And to build `libdvi`:
